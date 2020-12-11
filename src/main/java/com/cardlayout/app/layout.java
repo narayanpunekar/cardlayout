@@ -46,7 +46,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  *
- * @author hp
+ * @author narayan.punekar@yahoo.com
  */
 public class layout implements ItemListener, ActionListener {
     Panel cards;    //a panel that uses CardLayout
