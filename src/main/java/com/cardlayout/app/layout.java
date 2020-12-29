@@ -46,7 +46,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  *
- * @author narayan.punekar@yahoo.com
+ * @author hp
  */
 public class layout implements ItemListener, ActionListener {
     Panel cards;    //a panel that uses CardLayout
@@ -92,6 +92,8 @@ public class layout implements ItemListener, ActionListener {
     final static String RESET = "Reset";
     final static String PREVIOUS = "Previous";
     final static String NEXT = "Next";
+//    final static String PREVIOUSSOLUTION = "PreviousSolution";
+//    final static String NEXTSOLUTION = "NextSolution";
     final static String newline = "\n";
     int iCntVal;    //cnt value for Previous Next
     
