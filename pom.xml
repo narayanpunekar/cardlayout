@@ -39,22 +39,6 @@
         <plugin>
             <artifactId>maven-resources-plugin</artifactId>
             <version>3.0.2</version>
-            <executions>
-                <execution>
-                    <phase>package</phase>
-                    <goals>
-                        <goal>copy-resources</goal>
-                    </goals>
-                    <configuration>
-                        <outputDirectory>${basedir}</outputDirectory>
-                        <resources>
-                            <resource>
-                                <directory>src/main/resources/config</directory>
-                            </resource>
-                        </resources>
-                    </configuration>
-                </execution>
-            </executions>
         </plugin>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
