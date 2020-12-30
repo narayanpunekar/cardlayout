@@ -44,9 +44,11 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com.cardlayout.app.XQuery;
+
 /**
  *
- * @author hp
+ * @author narayan.punekar@yahoo.com
  */
 public class layout implements ItemListener, ActionListener {
     Panel cards;    //a panel that uses CardLayout
@@ -431,6 +433,10 @@ public class layout implements ItemListener, ActionListener {
                     }
                 }
             }   
+
+            XQuery clsXquery = new XQuery();
+            clsXquery.executeXQuery();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
