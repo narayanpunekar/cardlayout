@@ -5,50 +5,24 @@
  */
 package com.cardlayout.app;
 
-import java.awt.BorderLayout;
-import java.awt.Button;
-import java.awt.CardLayout;
-import java.awt.Checkbox;
-import java.awt.CheckboxGroup;
-import java.awt.Choice;
-import java.awt.Container;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.Label;
-import java.awt.Panel;
-import java.awt.ScrollPane;
-import java.awt.TextArea;
-import java.awt.TextField;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.File;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathFactory;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
+import java.awt.*;
+import java.awt.event.*;
+import javax.xml.parsers.*;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.*;
+import javax.xml.transform.stream.*;
+import javax.xml.xpath.*;
+import org.w3c.dom.*;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import com.cardlayout.app.XQuery;
-
 /**
  *
  * @author narayan.punekar@yahoo.com
+ * Card Layout based on CardLayoutDemo
+ *
  */
 public class layout implements ItemListener, ActionListener {
     Panel cards;    //a panel that uses CardLayout
@@ -103,6 +77,9 @@ public class layout implements ItemListener, ActionListener {
         iCntVal = 0;
     }
 
+/**
+ * Save the form
+ */
     private void fnProcessRequest() {
         DocumentBuilderFactory dbFactory = null;
         DocumentBuilder documentBuilder = null;
@@ -233,6 +210,9 @@ public class layout implements ItemListener, ActionListener {
         }
     }
 
+/**
+ * Save the Solution
+ */
     private void fnProcessSolution() {
         DocumentBuilderFactory dbFactory = null;
         DocumentBuilder documentBuilder = null;
@@ -261,6 +241,9 @@ public class layout implements ItemListener, ActionListener {
         }
     }
 
+/**
+ * Populate the form with the saved data 
+ */
     private void fnProcessXPath(int iCnt) {
         System.out.println("iCnt: " + iCnt);
         DocumentBuilderFactory dbFactory = null;
@@ -385,6 +368,9 @@ public class layout implements ItemListener, ActionListener {
         }
     }
 
+/**
+ * Product Backlog
+ */
     private void fnProductBacklog() {
         DocumentBuilderFactory dbFactory = null;
         DocumentBuilder documentBuilder = null;
@@ -433,10 +419,6 @@ public class layout implements ItemListener, ActionListener {
                     }
                 }
             }   
-
-            XQuery clsXquery = new XQuery();
-            clsXquery.executeXQuery();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -488,6 +470,10 @@ public class layout implements ItemListener, ActionListener {
         }
     }
 
+/**
+ * Card Layout based on CardLayoutDemo
+ * The "card"
+ */
     private void fnPanelOne() {
         card1 = new Panel();
         card1.setLayout(new GridLayout(15,2,15,15));
@@ -585,6 +571,10 @@ public class layout implements ItemListener, ActionListener {
         card1.add(btnSubmitRequest);
     }
 
+/**
+ * Card Layout based on CardLayoutDemo
+ * The "card"
+ */
     private void fnPanelThree() {
         card3 = new Panel();
         card3.setLayout(new GridBagLayout());
