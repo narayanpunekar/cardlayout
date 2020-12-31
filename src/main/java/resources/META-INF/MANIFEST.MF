@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 Built-By: narayan.punekar@yahoo.com
 Created-By: Apache Maven 3.6.0
 Build-Jdk: 1.8.0_202
-Class-Path: lib/Saxon-HE-9.4.0.7.jar
+Class-Path: apache-xmlbeans.jar oxquery.jar xmlparserv2_sans_jaxp_services.jar xqjapi.jar
 Main-Class: com.cardlayout.app.layout
