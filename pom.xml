@@ -25,6 +25,7 @@
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
+	<!--
     <dependency>
       <groupId>com.oracle.xqj</groupId>
       <artifactId>oxquery</artifactId>
@@ -35,6 +36,7 @@
       <artifactId>xqjapi</artifactId>
       <version>0.1</version>
     </dependency>
+	-->
     <!-- 
     <dependency>
       <groupId>com.oracle.xqj</groupId>
@@ -42,6 +44,7 @@
       <version>0.1</version>
     </dependency>
      -->
+    <!-- 
     <dependency>
       <groupId>com.oracle.xqj</groupId>
       <artifactId>xmlparserv2</artifactId>
@@ -52,6 +55,7 @@
       <artifactId>apache-xmlbeans</artifactId>
       <version>0.1</version>
     </dependency>
+     -->
     <!-- https://mvnrepository.com/artifact/net.sf.saxon/Saxon-HE -->
     <!-- 
     <dependency>
