@@ -25,15 +25,23 @@
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/org.exist-db.thirdparty.javax.xml.xquery/xqjapi -->
     <dependency>
-      <groupId>com.oracle.xqj</groupId>
-      <artifactId>oxquery</artifactId>
-      <version>0.1</version>
+        <groupId>org.exist-db.thirdparty.javax.xml.xquery</groupId>
+        <artifactId>xqjapi</artifactId>
+        <version>1.0-fr</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/com.oracle.database.xml/xmlparserv2 -->
     <dependency>
-      <groupId>com.oracle.xqj</groupId>
-      <artifactId>xqjapi</artifactId>
-      <version>0.1</version>
+        <groupId>com.oracle.database.xml</groupId>
+        <artifactId>xmlparserv2</artifactId>
+        <version>19.9.0.0</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.xmlbeans/xmlbeans -->
+    <dependency>
+        <groupId>org.apache.xmlbeans</groupId>
+        <artifactId>xmlbeans</artifactId>
+        <version>4.0.0</version>
     </dependency>
     <!-- 
     <dependency>
@@ -44,6 +52,17 @@
      -->
     <dependency>
       <groupId>com.oracle.xqj</groupId>
+      <artifactId>oxquery</artifactId>
+      <version>0.1</version>
+    </dependency>
+    <!-- 
+    <dependency>
+      <groupId>com.oracle.xqj</groupId>
+      <artifactId>xqjapi</artifactId>
+      <version>0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.oracle.xqj</groupId>
       <artifactId>xmlparserv2</artifactId>
       <version>0.1</version>
     </dependency>
@@ -51,13 +70,6 @@
       <groupId>com.oracle.xqj</groupId>
       <artifactId>apache-xmlbeans</artifactId>
       <version>0.1</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/net.sf.saxon/Saxon-HE -->
-    <!-- 
-    <dependency>
-        <groupId>net.sf.saxon</groupId>
-        <artifactId>Saxon-HE</artifactId>
-        <version>9.4.0.7</version>
     </dependency>
      -->
   </dependencies>
@@ -112,4 +124,13 @@
       </plugins>
     </pluginManagement>
   </build>
+<!--
+  <distributionManagement>
+      <repository>
+          <id>github</id>
+          <name>cardlayout</name>
+          <url>https://github.com/narayanpunekar/cardlayout</url>
+      </repository>
+  </distributionManagement>
+-->
 </project>
