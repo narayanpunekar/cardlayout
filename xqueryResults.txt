@@ -1,0 +1,23 @@
+---------------------< com.cardlayout.app:layout >----------------------
+Building layout 1.0-SNAPSHOT
+--------------------------------[ jar ]---------------------------------
+
+--- exec-maven-plugin:1.2.1:exec (default-cli) @ layout ---
+XQuery1
+<Data><LastCnt>11</LastCnt><SolvedCnt>4</SolvedCnt><SolNum>8</SolNum></Data>
+
+XQuery2
+<PhoneOne>naeight</PhoneOne><PhoneOne>naeleven</PhoneOne><PhoneOne>nafive</PhoneOne><PhoneOne>nafour</PhoneOne><PhoneOne>nanine</PhoneOne><PhoneOne>naone</PhoneOne><PhoneOne>naseven</PhoneOne><PhoneOne>nasix</PhoneOne><PhoneOne>naten</PhoneOne><PhoneOne>nathree</PhoneOne><PhoneOne>natwo</PhoneOne>
+
+XQuery3
+<Data><LastCnt>1</LastCnt><SolvedCnt>1</SolvedCnt></Data><Data><LastCnt>2</LastCnt><SolvedCnt>0</SolvedCnt></Data><Data><LastCnt>3</LastCnt><SolvedCnt>3</SolvedCnt></Data><Data><LastCnt>4</LastCnt><SolvedCnt>0</SolvedCnt></Data><Data><LastCnt>5</LastCnt><SolvedCnt>0</SolvedCnt></Data><Data><LastCnt>6</LastCnt><SolvedCnt>3</SolvedCnt></Data><Data><LastCnt>7</LastCnt><SolvedCnt>1</SolvedCnt></Data><Data><LastCnt>8</LastCnt><SolvedCnt>0</SolvedCnt></Data><Data><LastCnt>9</LastCnt><SolvedCnt>0</SolvedCnt></Data><Data><LastCnt>10</LastCnt><SolvedCnt>0</SolvedCnt></Data><Data><LastCnt>11</LastCnt><SolvedCnt>0</SolvedCnt></Data>
+
+XQuery4
+<Data><LastCnt>1</LastCnt><SolvedCnt>1</SolvedCnt></Data><Data><LastCnt>3</LastCnt><SolvedCnt>1</SolvedCnt></Data><Data><LastCnt>6</LastCnt><SolvedCnt>1</SolvedCnt></Data><Data><LastCnt>7</LastCnt><SolvedCnt>1</SolvedCnt></Data>
+
+------------------------------------------------------------------------
+BUILD SUCCESS
+------------------------------------------------------------------------
+Total time:  25.107 s
+Finished at: 2021-01-02T21:55:51+05:30
+------------------------------------------------------------------------
