@@ -25,6 +25,64 @@
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/org.exist-db.thirdparty.javax.xml.xquery/xqjapi -->
+    <dependency>
+        <groupId>org.exist-db.thirdparty.javax.xml.xquery</groupId>
+        <artifactId>xqjapi</artifactId>
+        <version>1.0-fr</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/com.oracle.database.xml/xmlparserv2 -->
+    <dependency>
+        <groupId>com.oracle.database.xml</groupId>
+        <artifactId>xmlparserv2</artifactId>
+        <version>19.9.0.0</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.xmlbeans/xmlbeans -->
+    <dependency>
+        <groupId>org.apache.xmlbeans</groupId>
+        <artifactId>xmlbeans</artifactId>
+        <version>4.0.0</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/com.bagridb/bagri-core -->
+    <dependency>
+        <groupId>com.bagridb</groupId>
+        <artifactId>bagri-core</artifactId>
+        <version>1.2.0</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/com.bagridb/bagri-xqj -->
+    <dependency>
+        <groupId>com.bagridb</groupId>
+        <artifactId>bagri-xqj</artifactId>
+        <version>1.2.0</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>2.0.0-alpha1</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-jdk14 -->
+    <!--
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-jdk14</artifactId>
+        <version>2.0.0-alpha1</version>
+        <scope>test</scope>
+    </dependency>
+    -->
+    <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-nop -->
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-nop</artifactId>
+        <version>2.0.0-alpha1</version>
+        <scope>test</scope>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/com.thoughtworks.xstream/xstream -->
+    <dependency>
+        <groupId>com.thoughtworks.xstream</groupId>
+        <artifactId>xstream</artifactId>
+        <version>1.4.15</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -77,4 +135,13 @@
       </plugins>
     </pluginManagement>
   </build>
+<!--
+  <distributionManagement>
+      <repository>
+          <id>github</id>
+          <name>cardlayout</name>
+          <url>https://github.com/narayanpunekar/cardlayout</url>
+      </repository>
+  </distributionManagement>
+-->
 </project>
