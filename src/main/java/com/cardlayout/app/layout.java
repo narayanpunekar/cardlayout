@@ -38,8 +38,9 @@ public class layout implements ItemListener, ActionListener {
     TextField txtEmail;
     TextField txtPhoneOne;
     TextField txtPhoneTwo;
-    TextField txtFax;
-    Choice chcOS;
+    TextField txtFaxPager;
+    Choice chcFaxPager;
+    //Choice chcOS;
     CheckboxGroup cbgOS;
     Checkbox rdoWindows;
     Checkbox rdoUnix;
@@ -132,10 +133,17 @@ public class layout implements ItemListener, ActionListener {
                 elemPhoneTwo.appendChild(xmlDocument.createTextNode(txtPhoneTwo.getText()));
                 elemSNo.appendChild(elemPhoneTwo);
 
-                Element elemFax = xmlDocument.createElement("Fax");
-                elemFax.appendChild(xmlDocument.createTextNode(txtFax.getText()));
-                elemSNo.appendChild(elemFax);
+                Element elemFaxPager = xmlDocument.createElement("FaxPagerchoice");
+                elemSNo.appendChild(elemFaxPager);
+                Attr attrFaxPager = xmlDocument.createAttribute("faxpager");
+                attrFaxPager.appendChild(xmlDocument.createTextNode(chcFaxPager.getSelectedItem()));
+                elemFaxPager.setAttributeNode(attrFaxPager);
+                
+                Element elemFaxPagerNum = xmlDocument.createElement("FaxPagerNum");
+                elemFaxPagerNum.appendChild(xmlDocument.createTextNode(txtFaxPager.getText()));
+                elemSNo.appendChild(elemFaxPagerNum);
 
+                /*
                 Element elemOSchoice = xmlDocument.createElement("OSchoice");
                 //elemOSchoice.appendChild(xmlDocument.createTextNode("Operating System choice"));
                 elemSNo.appendChild(elemOSchoice);
@@ -143,6 +151,7 @@ public class layout implements ItemListener, ActionListener {
                 Attr attrOSchoice = xmlDocument.createAttribute("ostypechoice");
                 attrOSchoice.appendChild(xmlDocument.createTextNode(chcOS.getSelectedItem()));
                 elemOSchoice.setAttributeNode(attrOSchoice);
+                */
 
                 Element elemOSradio = xmlDocument.createElement("OSradio");
                 //elemOSradio.appendChild(xmlDocument.createTextNode("Operating System radio"));
@@ -216,13 +225,14 @@ public class layout implements ItemListener, ActionListener {
  * Save the Solution
  */
     private void fnProcessSolution() {
-        DocumentBuilderFactory dbFactory = null;
-        DocumentBuilder documentBuilder = null;
-        Document xmlDocument = null;
-        Element elemSolutionDescription = null;
-        Node nodeSNo = null;
-        Element elemSNo = null;
         try {
+            DocumentBuilderFactory dbFactory = null;
+            DocumentBuilder documentBuilder = null;
+            Document xmlDocument = null;
+            Element elemSolutionDescription = null;
+            Node nodeSNo = null;
+            Element elemSNo = null;
+
             dbFactory = DocumentBuilderFactory.newInstance();
             documentBuilder = dbFactory.newDocumentBuilder();
             xmlDocument = documentBuilder.parse(new File("ProductBacklog.xml"));
@@ -247,12 +257,13 @@ public class layout implements ItemListener, ActionListener {
  * Populate the form with the saved data 
  */
     private void fnProcessXPath(int iCnt) {
-        out.println("iCnt: " + iCnt);
-        DocumentBuilderFactory dbFactory = null;
-        DocumentBuilder documentBuilder = null;
-        Document xmlDocument = null;
-        XPath xpath = null;
         try {
+            out.println("iCnt: " + iCnt);
+            DocumentBuilderFactory dbFactory = null;
+            DocumentBuilder documentBuilder = null;
+            Document xmlDocument = null;
+            XPath xpath = null;
+
             dbFactory = DocumentBuilderFactory.newInstance();
             documentBuilder = dbFactory.newDocumentBuilder();
             xmlDocument = documentBuilder.parse(new File("ProductBacklog.xml"));
@@ -278,13 +289,17 @@ public class layout implements ItemListener, ActionListener {
             String strPhoneTwoVal = (String)xpath.evaluate(strPhoneTwo, xmlDocument, XPathConstants.STRING);
             txtPhoneTwo.setText(strPhoneTwoVal);
 
-            String strFax = "/ProductBacklog/SNo[@cnt=" + iCnt + "]/Fax";
-            String strFaxVal = (String)xpath.evaluate(strFax, xmlDocument, XPathConstants.STRING);
-            txtFax.setText(strFaxVal);
+            String strFaxPagerChoice = "/ProductBacklog/SNo[@cnt=" + iCnt + "]/FaxPagerchoice/@faxpager";
+            String strFaxPagerChoiceVal = (String)xpath.evaluate(strFaxPagerChoice, xmlDocument, XPathConstants.STRING);
+            chcFaxPager.select(strFaxPagerChoiceVal);
 
-            String strOSchoice = "/ProductBacklog/SNo[@cnt=" + iCnt + "]/OSchoice/@ostypechoice";
-            String strOSchoiceVal = (String)xpath.evaluate(strOSchoice, xmlDocument, XPathConstants.STRING);
-            chcOS.select(strOSchoiceVal);
+            String strFaxPagerNum = "/ProductBacklog/SNo[@cnt=" + iCnt + "]/FaxPagerNum";
+            String strFaxPagerNumVal = (String)xpath.evaluate(strFaxPagerNum, xmlDocument, XPathConstants.STRING);
+            txtFaxPager.setText(strFaxPagerNumVal);
+
+            //String strOSchoice = "/ProductBacklog/SNo[@cnt=" + iCnt + "]/OSchoice/@ostypechoice";
+            //String strOSchoiceVal = (String)xpath.evaluate(strOSchoice, xmlDocument, XPathConstants.STRING);
+            //chcOS.select(strOSchoiceVal);
 
             String strOSradio = "/ProductBacklog/SNo[@cnt=" + iCnt + "]/OSradio/@ostyperadio";
             String strOSradioVal = (String)xpath.evaluate(strOSradio, xmlDocument, XPathConstants.STRING);
@@ -360,7 +375,7 @@ public class layout implements ItemListener, ActionListener {
             
             String strPassword = "/ProductBacklog/SNo[@cnt=" + iCnt + "]/Password";
             String strPasswordVal = (String)xpath.evaluate(strPassword, xmlDocument, XPathConstants.STRING);
-            txtFax.setText(strPasswordVal);
+            txtPassword.setText(strPasswordVal);
             
             String strSolutionDescription = "/ProductBacklog/SNo[@cnt=" + iCnt + "]/SolutionDescription";
             String strSolutionDescriptionVal = (String)xpath.evaluate(strSolutionDescription, xmlDocument, XPathConstants.STRING);
@@ -433,8 +448,9 @@ public class layout implements ItemListener, ActionListener {
             txtEmail.setText(new String(""));
             txtPhoneOne.setText(new String(""));
             txtPhoneTwo.setText(new String(""));
-            txtFax.setText(new String(""));
-            chcOS.select("Windows");
+            chcFaxPager.select("Fax");
+            txtFaxPager.setText(new String(""));
+            //chcOS.select("Windows");
             cbgOS.setSelectedCheckbox(rdoWindows);
             chkWord.setState(false);
             chkExcel.setState(false);
@@ -507,10 +523,17 @@ public class layout implements ItemListener, ActionListener {
         txtPhoneTwo = new TextField(20);
         card1.add(txtPhoneTwo);
 
-        card1.add(new Label("Fax"));
-        txtFax = new TextField(20);
-        card1.add(txtFax);
+        card1.add(new Label("Fax or Pager: select any one"));
+        chcFaxPager = new Choice();
+        chcFaxPager.add("Fax");
+        chcFaxPager.add("Pager");
+        card1.add(chcFaxPager);
 
+        card1.add(new Label("Fax Pager"));
+        txtFaxPager = new TextField(20);
+        card1.add(txtFaxPager);
+
+        /*
         card1.add(new Label("Operating System: select any one"));
         chcOS = new Choice();
         chcOS.add("Windows");
@@ -518,6 +541,7 @@ public class layout implements ItemListener, ActionListener {
         chcOS.add("Linux");
         chcOS.add("OS X");
         card1.add(chcOS);
+        */
 
         card1.add(new Label("Operating System: select any one"));
         panelOScbg = new Panel();
@@ -641,8 +665,9 @@ public class layout implements ItemListener, ActionListener {
             txtEmail.setEditable(true);
             txtPhoneOne.setEditable(true);
             txtPhoneTwo.setEditable(true);
-            txtFax.setEditable(true);
-            chcOS.setEnabled(true);
+            chcFaxPager.setEnabled(true);
+            txtFaxPager.setEditable(true);
+            //chcOS.setEnabled(true);
             rdoWindows.setEnabled(true);
             rdoUnix.setEnabled(true);
             rdoLinux.setEnabled(true);
@@ -667,8 +692,9 @@ public class layout implements ItemListener, ActionListener {
             txtEmail.setEditable(false);
             txtPhoneOne.setEditable(false);
             txtPhoneTwo.setEditable(false);
-            txtFax.setEditable(false);
-            chcOS.setEnabled(false);
+            chcFaxPager.setEnabled(false);
+            txtFaxPager.setEditable(false);
+            //chcOS.setEnabled(false);
             rdoWindows.setEnabled(false);
             rdoUnix.setEnabled(false);
             rdoLinux.setEnabled(false);
