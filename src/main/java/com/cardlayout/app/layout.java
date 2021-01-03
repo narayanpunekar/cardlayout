@@ -5,6 +5,8 @@
  */
 package com.cardlayout.app;
 
+import static java.lang.System.out;
+
 import java.io.File;
 import java.awt.*;
 import java.awt.event.*;
@@ -245,7 +247,7 @@ public class layout implements ItemListener, ActionListener {
  * Populate the form with the saved data 
  */
     private void fnProcessXPath(int iCnt) {
-        System.out.println("iCnt: " + iCnt);
+        out.println("iCnt: " + iCnt);
         DocumentBuilderFactory dbFactory = null;
         DocumentBuilder documentBuilder = null;
         Document xmlDocument = null;
@@ -392,18 +394,18 @@ public class layout implements ItemListener, ActionListener {
          
             txaTopTextArea.setText(new String(""));
             txaBottomTextArea.setText(new String(""));
-            System.out.println("nodelistSNo.getLength(): " + nodelistSNo.getLength());
+            out.println("nodelistSNo.getLength(): " + nodelistSNo.getLength());
             for (int j = 0; j < nodelistSNo.getLength(); j++) {
                 nodeSNo = nodelistSNo.item(j);
             
                 if (nodeSNo.getNodeType() == Node.ELEMENT_NODE) {
                     elemSNo = (Element) nodeSNo;
-                    System.out.println("cnt : " + elemSNo.getAttribute("cnt"));
+                    out.println("cnt : " + elemSNo.getAttribute("cnt"));
                     nodelistProblemDescription = elemSNo.getElementsByTagName("ProblemDescription");
                     nodeProblemDescription = nodelistProblemDescription.item(0);
                     if (nodeProblemDescription.getNodeType() == Node.ELEMENT_NODE) {
                         elemProblemDescription = (Element) nodeProblemDescription;
-                        System.out.println("ProblemDescription : " + elemProblemDescription.getTextContent());
+                        out.println("ProblemDescription : " + elemProblemDescription.getTextContent());
                         txaTopTextArea.append(elemSNo.getAttribute("cnt") + "] " + elemProblemDescription.getTextContent()
                                             + layout.newline);
                     }
@@ -412,7 +414,7 @@ public class layout implements ItemListener, ActionListener {
                         nodeSolutionDescription = nodelistSolutionDescription.item(k);
                         if(nodeSolutionDescription.getNodeType()==Node.ELEMENT_NODE) {
                             elemSolutionDescription = (Element)nodeSolutionDescription;
-                            System.out.println("SolutionDescription : " + elemSolutionDescription.getTextContent());
+                            out.println("SolutionDescription : " + elemSolutionDescription.getTextContent());
                             txaBottomTextArea.append(elemSNo.getAttribute("cnt") + "." + (k+1) + "] " + elemSolutionDescription.getTextContent()
                                                 + layout.newline);
                         }
