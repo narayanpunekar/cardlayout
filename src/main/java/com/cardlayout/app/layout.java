@@ -227,36 +227,77 @@ public class layout implements ItemListener, ActionListener {
  * Save the Solution
  */
     private void fnProcessSolution() {
-        try {
-            DocumentBuilderFactory dbFactory = null;
-            DocumentBuilder documentBuilder = null;
-            Document xmlDocument = null;
-            Element elemSolutionDescription = null;
-            Node nodeSNo = null;
-            Element elemSNo = null;
+        DocumentBuilderFactory dbFactory = null;
+        DocumentBuilder documentBuilder = null;
+        Document xmlDocument = null;
+        Element elemSolutionDescription = null;
+        Node nodeSNo = null;
+        Element elemSNo = null;
 
+        Document xmlDocumentPieChart = null;
+        Element elemPieChartData = null;
+
+        try {
             dbFactory = DocumentBuilderFactory.newInstance();
             documentBuilder = dbFactory.newDocumentBuilder();
-            xmlDocument = documentBuilder.parse(new File("ProductBacklog.xml"));
+            xmlDocumentPieChart = documentBuilder.parse(new File("PieChartData.xml"));
+            elemPieChartData = xmlDocumentPieChart.getDocumentElement();
+        } catch(Exception ex1) {
+            xmlDocumentPieChart = documentBuilder.newDocument();
+            elemPieChartData = xmlDocumentPieChart.createElement("PieChartData");
+            xmlDocumentPieChart.appendChild(elemPieChartData);
+            ex1.printStackTrace();
+        } finally {
+            try {
+                xmlDocument = documentBuilder.parse(new File("ProductBacklog.xml"));
+                XPath xpath = XPathFactory.newInstance().newXPath();
 
-            XPath xpath = XPathFactory.newInstance().newXPath();
-            String strSnocnt = "/ProductBacklog/SNo[@cnt=" + iCntVal +"]";
-            nodeSNo = (Node)xpath.evaluate(strSnocnt, xmlDocument, XPathConstants.NODE);
-            elemSNo = (Element) nodeSNo;
+                //new <SNo><SolutionDescription>, increment <SolvedCnt>
+                String strSolutionDescription = "/ProductBacklog/SNo[@cnt=" + iCntVal + "][SolutionDescription]";
+                Node nodeSolutionDescriptionExists = null;
+                boolean bNodeSolutionDescriptionExists = false;
+                nodeSolutionDescriptionExists = (Node)xpath.evaluate(strSolutionDescription, xmlDocument, XPathConstants.NODE);
+                if (nodeSolutionDescriptionExists != null)
+                    bNodeSolutionDescriptionExists = true;
 
-            elemSolutionDescription = xmlDocument.createElement("SolutionDescription");
-            elemSolutionDescription.appendChild(xmlDocument.createTextNode(txaSolutionDescription.getText()));
-            elemSNo.appendChild(elemSolutionDescription);
+                if (!bNodeSolutionDescriptionExists) {
+                    String strSolvedcnt = "/PieChartData/SolvedCnt[last()]";
+                    Double dSolvedcntVal = (Double)xpath.evaluate(strSolvedcnt, xmlDocumentPieChart, XPathConstants.NUMBER);
+                    Element elemSolvedCnt = xmlDocumentPieChart.createElement("SolvedCnt");
+                    int iSolvedcntVal = dSolvedcntVal.intValue() + 1;
+                    elemSolvedCnt.appendChild(xmlDocumentPieChart.createTextNode((new Integer(iSolvedcntVal)).toString()));
+                    elemPieChartData.appendChild(elemSolvedCnt);
+                }
+                
+                //new <SolutionDescription>, increment <SolvedNum>
+                String strSolvednum = "/PieChartData/SolvedNum[last()]";
+                Double dSolvednumVal = (Double)xpath.evaluate(strSolvednum, xmlDocumentPieChart, XPathConstants.NUMBER);
+                Element elemSolvedNum = xmlDocumentPieChart.createElement("SolvedNum");
+                int iSolvednumVal = dSolvednumVal.intValue() + 1;
+                elemSolvedNum.appendChild(xmlDocumentPieChart.createTextNode((new Integer(iSolvednumVal)).toString()));
+                elemPieChartData.appendChild(elemSolvedNum);
 
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.transform(new DOMSource(xmlDocument), new StreamResult(new File("ProductBacklog.xml")));
-        } catch (Exception e) {
-            e.printStackTrace();
+                String strSnocnt = "/ProductBacklog/SNo[@cnt=" + iCntVal +"]";
+                nodeSNo = (Node)xpath.evaluate(strSnocnt, xmlDocument, XPathConstants.NODE);
+                elemSNo = (Element) nodeSNo;
+
+                elemSolutionDescription = xmlDocument.createElement("SolutionDescription");
+                elemSolutionDescription.appendChild(xmlDocument.createTextNode(txaSolutionDescription.getText()));
+                elemSNo.appendChild(elemSolutionDescription);
+
+                Transformer transformer = TransformerFactory.newInstance().newTransformer();
+                transformer.transform(new DOMSource(xmlDocument), new StreamResult(new File("ProductBacklog.xml")));
+
+                Transformer transformerPieChart = TransformerFactory.newInstance().newTransformer();
+                transformerPieChart.transform(new DOMSource(xmlDocumentPieChart), new StreamResult(new File("PieChartData.xml")));
+            } catch (Exception ex2) {
+                ex2.printStackTrace();
+            }
         }
     }
 
 /**
- * Populate the form with the saved data 
+ * Populate the form with the saved data
  */
     private void fnProcessXPath(int iCnt) {
         try {
