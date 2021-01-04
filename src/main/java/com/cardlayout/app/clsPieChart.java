@@ -5,6 +5,7 @@
  */
 package com.cardlayout.app;
 
+import java.io.File;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.collections.FXCollections;
@@ -17,6 +18,13 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  *
@@ -25,13 +33,27 @@ import javafx.stage.Stage;
 public class clsPieChart extends Application {
     @Override
     public void start(Stage stage) throws Exception {
+        DocumentBuilderFactory dbFactory = null;
+        DocumentBuilder documentBuilder = null;
+        Document xmlDocumentPieChart = null;
+        dbFactory = DocumentBuilderFactory.newInstance();
+        documentBuilder = dbFactory.newDocumentBuilder();
+        xmlDocumentPieChart = documentBuilder.parse(new File("PieChartData.xml"));
+        XPath xpath = XPathFactory.newInstance().newXPath();
+
+        String strSolvedcnt = "/PieChartData/SolvedCnt[last()]";
+        Double dSolvedcntVal = (Double)xpath.evaluate(strSolvedcnt, xmlDocumentPieChart, XPathConstants.NUMBER);
+        int iSolvedCnt = dSolvedcntVal.intValue() + 1;
+        
+        String strSolvednum = "/PieChartData/SolvedNum[last()]";
+        Double dSolvednumVal = (Double)xpath.evaluate(strSolvednum, xmlDocumentPieChart, XPathConstants.NUMBER);
+        int iSolvedNum = dSolvednumVal.intValue() + 1;
+
         Scene scene = new Scene(new Group());
         stage.setTitle("Product Backlog");
         stage.setWidth(500);
         stage.setHeight(500);
 
-        int iSolvedCnt = 9;
-        int iSolvedNum  = 6;
         double dSolvedCnt = (100*iSolvedCnt)/(iSolvedCnt+iSolvedNum);
         double dSolvedNum = (100*iSolvedNum)/(iSolvedCnt+iSolvedNum);
 
