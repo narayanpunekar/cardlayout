@@ -31,6 +31,7 @@ public class layout implements ItemListener, ActionListener {
     Panel card1;    //a panel that uses first "card"
     Panel card2;    //a panel that uses second "card"
     Panel card3;    //a panel that uses third "card"
+    Panel card4;    //a panel that uses fourth "card"
     Button btnPrevious;
     Button btnNext;
     TextField txtFirstName;
@@ -66,6 +67,7 @@ public class layout implements ItemListener, ActionListener {
     final static String PROBLEMSPANEL = "IT Department";
     final static String SOLUTIONSPANEL = "Solutions Department";
     final static String PRODUCTBACKLOGPANEL = "Product Backlog";
+    final static String PIECHARTPANEL = "Pie Chart";
     final static String SUBMITREQUEST = "Submit Request";
     final static String SUBMITSOLUTION = "Submit Solution";
     final static String RESET = "Reset";
@@ -386,22 +388,35 @@ public class layout implements ItemListener, ActionListener {
     }
 
 /**
+ * Pie Chart
+ */
+    private void fnPieChart() {
+        try {
+            clsPieChart pieChart = new clsPieChart();
+            pieChart.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+/**
  * Product Backlog
  */
     private void fnProductBacklog() {
-        DocumentBuilderFactory dbFactory = null;
-        DocumentBuilder documentBuilder = null;
-        Document xmlDocument = null;
-        NodeList nodelistSNo = null;
-        Node nodeSNo = null;
-        Element elemSNo = null;
-        NodeList nodelistProblemDescription = null;
-        Node nodeProblemDescription = null;
-        Element elemProblemDescription = null;
-        NodeList nodelistSolutionDescription = null;
-        Node nodeSolutionDescription = null;
-        Element elemSolutionDescription = null;
         try {
+            DocumentBuilderFactory dbFactory = null;
+            DocumentBuilder documentBuilder = null;
+            Document xmlDocument = null;
+            NodeList nodelistSNo = null;
+            Node nodeSNo = null;
+            Element elemSNo = null;
+            NodeList nodelistProblemDescription = null;
+            Node nodeProblemDescription = null;
+            Element elemProblemDescription = null;
+            NodeList nodelistSolutionDescription = null;
+            Node nodeSolutionDescription = null;
+            Element elemSolutionDescription = null;
+
             dbFactory = DocumentBuilderFactory.newInstance();
             documentBuilder = dbFactory.newDocumentBuilder();
             xmlDocument = documentBuilder.parse(new File("ProductBacklog.xml"));
@@ -655,6 +670,14 @@ public class layout implements ItemListener, ActionListener {
         btnPrevious.addActionListener(this);
         btnNext.addActionListener(this);
     }
+
+/**
+ * Card Layout based on CardLayoutDemo
+ * The "card"
+ */
+    private void fnPanelFour() {
+        card4 = new Panel();
+    }
     
     public void itemStateChanged(ItemEvent evt) {
         CardLayout cardLayout = (CardLayout)cards.getLayout();
@@ -718,6 +741,9 @@ public class layout implements ItemListener, ActionListener {
         if(evt.getItem().toString()==PRODUCTBACKLOGPANEL) {
             fnProductBacklog();
         }
+        if(evt.getItem().toString()==PIECHARTPANEL) {
+            fnPieChart();
+        }
     }
     
     public void addComponentToPane(Container pane) {
@@ -727,6 +753,7 @@ public class layout implements ItemListener, ActionListener {
         cb.add(PROBLEMSPANEL);
         cb.add(SOLUTIONSPANEL);
         cb.add(PRODUCTBACKLOGPANEL);
+        cb.add(PIECHARTPANEL);
         cb.addItemListener(this);
         comboBoxPane.add(cb);
         
@@ -734,12 +761,14 @@ public class layout implements ItemListener, ActionListener {
         fnPanelOne();
         //fnPanelTwo();
         fnPanelThree();
+        fnPanelFour();
 
         //Create the panel that contains the "cards".
         cards = new Panel(new CardLayout());
         cards.add(card1, PROBLEMSPANEL);
         cards.add(card1, SOLUTIONSPANEL);
         cards.add(card3, PRODUCTBACKLOGPANEL);
+        cards.add(card4, PIECHARTPANEL);
 
         pane.add(comboBoxPane, BorderLayout.PAGE_START);
         pane.add(cards, BorderLayout.CENTER);
