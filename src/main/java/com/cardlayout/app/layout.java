@@ -32,6 +32,7 @@ public class layout implements ItemListener, ActionListener {
     Panel card2;    //a panel that uses second "card"
     Panel card3;    //a panel that uses third "card"
     Panel card4;    //a panel that uses fourth "card"
+    Panel card5;    //a panel that uses fifth "card"
     Button btnPrevious;
     Button btnNext;
     TextField txtFirstName;
@@ -68,6 +69,7 @@ public class layout implements ItemListener, ActionListener {
     final static String SOLUTIONSPANEL = "Solutions Department";
     final static String PRODUCTBACKLOGPANEL = "Product Backlog";
     final static String PIECHARTPANEL = "Pie Chart";
+    final static String BARCHARTPANEL = "Bar Chart";
     final static String SUBMITREQUEST = "Submit Request";
     final static String SUBMITSOLUTION = "Submit Solution";
     final static String RESET = "Reset";
@@ -439,6 +441,18 @@ public class layout implements ItemListener, ActionListener {
             e.printStackTrace();
         }
     }
+
+/**
+ * Bar Chart
+ */
+    private void fnBarChart() {
+        try {
+            clsBarChart barChart = new clsBarChart();
+            barChart.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     
 /**
  * Product Backlog
@@ -627,7 +641,7 @@ public class layout implements ItemListener, ActionListener {
         card1.add(panelSoftware);
         
         card1.add(new Label("Problem Description"));
-        txaProblemDescription = new TextArea("", 5, 40, TextArea.SCROLLBARS_BOTH);
+        txaProblemDescription = new TextArea("", 20, 40, TextArea.SCROLLBARS_BOTH);
         txaProblemDescription.setCaretPosition(0);
         card1.add(txaProblemDescription);
         
@@ -638,7 +652,7 @@ public class layout implements ItemListener, ActionListener {
 
         lblSolutionDescription = new Label("Solution Description");
         card1.add(lblSolutionDescription);
-        txaSolutionDescription = new TextArea("", 5, 40, TextArea.SCROLLBARS_BOTH);
+        txaSolutionDescription = new TextArea("", 20, 40, TextArea.SCROLLBARS_BOTH);
         txaSolutionDescription.setCaretPosition(0);
         card1.add(txaSolutionDescription);
 
@@ -720,6 +734,14 @@ public class layout implements ItemListener, ActionListener {
         card4 = new Panel();
     }
     
+/**
+ * Card Layout based on CardLayoutDemo
+ * The "card"
+ */
+    private void fnPanelFive() {
+        card5 = new Panel();
+    }
+    
     public void itemStateChanged(ItemEvent evt) {
         CardLayout cardLayout = (CardLayout)cards.getLayout();
         cardLayout.show(cards, (String)evt.getItem());
@@ -785,6 +807,9 @@ public class layout implements ItemListener, ActionListener {
         if(evt.getItem().toString()==PIECHARTPANEL) {
             fnPieChart();
         }
+        if(evt.getItem().toString()==BARCHARTPANEL) {
+            fnBarChart();
+        }
     }
     
     public void addComponentToPane(Container pane) {
@@ -795,6 +820,7 @@ public class layout implements ItemListener, ActionListener {
         cb.add(SOLUTIONSPANEL);
         cb.add(PRODUCTBACKLOGPANEL);
         cb.add(PIECHARTPANEL);
+        cb.add(BARCHARTPANEL);
         cb.addItemListener(this);
         comboBoxPane.add(cb);
         
@@ -803,6 +829,7 @@ public class layout implements ItemListener, ActionListener {
         //fnPanelTwo();
         fnPanelThree();
         fnPanelFour();
+        fnPanelFive();
 
         //Create the panel that contains the "cards".
         cards = new Panel(new CardLayout());
@@ -810,6 +837,7 @@ public class layout implements ItemListener, ActionListener {
         cards.add(card1, SOLUTIONSPANEL);
         cards.add(card3, PRODUCTBACKLOGPANEL);
         cards.add(card4, PIECHARTPANEL);
+        cards.add(card5, BARCHARTPANEL);
 
         pane.add(comboBoxPane, BorderLayout.PAGE_START);
         pane.add(cards, BorderLayout.CENTER);
