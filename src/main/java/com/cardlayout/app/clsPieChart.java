@@ -5,9 +5,9 @@
  */
 package com.cardlayout.app;
 
+import static javafx.application.Application.launch;
 import java.io.File;
 import javafx.application.Application;
-import static javafx.application.Application.launch;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -88,5 +88,4 @@ public class clsPieChart extends Application {
     public void start() throws Exception {
         launch();
     }
-
 }
