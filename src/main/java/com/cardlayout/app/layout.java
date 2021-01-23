@@ -422,9 +422,15 @@ public class layout implements ItemListener, ActionListener {
             String strPasswordVal = (String)xpath.evaluate(strPassword, xmlDocument, XPathConstants.STRING);
             txtPassword.setText(strPasswordVal);
             
+            //Begin branch_210123_1: Solution Description placeholder text @ Solutions Department screen
+            /* 
             String strSolutionDescription = "/ProductBacklog/SNo[@cnt=" + iCnt + "]/SolutionDescription";
             String strSolutionDescriptionVal = (String)xpath.evaluate(strSolutionDescription, xmlDocument, XPathConstants.STRING);
             txaSolutionDescription.setText(strSolutionDescriptionVal);
+            */
+            txaSolutionDescription.setFont(new Font(Font.SERIF,Font.ITALIC,15));
+            txaSolutionDescription.setText("<Enter Solution...>");
+            //End branch_210123_1: Solution Description placeholder text @ Solutions Department screen
         } catch(Exception ex4) {
             ex4.printStackTrace();
         }
