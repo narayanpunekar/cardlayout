@@ -48,6 +48,9 @@ public class layout implements ItemListener, ActionListener {
     Checkbox rdoUnix;
     Checkbox rdoLinux;
     Checkbox rdoOsx;
+    //Begin branch210201_1: Support for mobile
+    Checkbox rdoMobile;
+    //End branch210201_1: Support for mobile
     Checkbox chkWord;
     Checkbox chkExcel;
     Checkbox chkPowerpoint;
@@ -348,6 +351,7 @@ public class layout implements ItemListener, ActionListener {
 
             String strOSradio = "/ProductBacklog/SNo[@cnt=" + iCnt + "]/OSradio/@ostyperadio";
             String strOSradioVal = (String)xpath.evaluate(strOSradio, xmlDocument, XPathConstants.STRING);
+            //Begin branch210201_1: Support for mobile
             switch(strOSradioVal) {
                 case "Windows": 
                     cbgOS.setSelectedCheckbox(rdoWindows);
@@ -361,10 +365,15 @@ public class layout implements ItemListener, ActionListener {
                 case "OS X": 
                     cbgOS.setSelectedCheckbox(rdoOsx);
                     break;
+                case "Mobile":
+                    cbgOS.setSelectedCheckbox(rdoMobile);
+                    break;
                 default:
-                    cbgOS.setSelectedCheckbox(rdoWindows);
+                    //cbgOS.setSelectedCheckbox(rdoWindows);
+                    cbgOS.setSelectedCheckbox(rdoMobile);
                     break;
             }
+            //End branch210201_1: Support for mobile
 
             //String strSoftware = "/ProductBacklog/SNo[@cnt=" + iCnt + "]/Software";
             //Node nodeSoftware = (Node)xpath.evaluate(strSoftware, xmlDocument, XPathConstants.NODE);
@@ -422,7 +431,7 @@ public class layout implements ItemListener, ActionListener {
             String strPasswordVal = (String)xpath.evaluate(strPassword, xmlDocument, XPathConstants.STRING);
             txtPassword.setText(strPasswordVal);
             
-            //Begin branch_210123_1: Solution Description placeholder text @ Solutions Department screen
+            //Begin branch210123_1: Solution Description placeholder text @ Solutions Department screen
             /* 
             String strSolutionDescription = "/ProductBacklog/SNo[@cnt=" + iCnt + "]/SolutionDescription";
             String strSolutionDescriptionVal = (String)xpath.evaluate(strSolutionDescription, xmlDocument, XPathConstants.STRING);
@@ -430,7 +439,7 @@ public class layout implements ItemListener, ActionListener {
             */
             txaSolutionDescription.setFont(new Font(Font.SERIF,Font.ITALIC,15));
             txaSolutionDescription.setText("<Enter Solution...>");
-            //End branch_210123_1: Solution Description placeholder text @ Solutions Department screen
+            //End branch210123_1: Solution Description placeholder text @ Solutions Department screen
         } catch(Exception ex4) {
             ex4.printStackTrace();
         }
@@ -512,8 +521,12 @@ public class layout implements ItemListener, ActionListener {
                     if (nodeProblemDescription.getNodeType() == Node.ELEMENT_NODE) {
                         elemProblemDescription = (Element) nodeProblemDescription;
                         out.println("ProblemDescription : " + elemProblemDescription.getTextContent());
-                        txaTopTextArea.append(elemSNo.getAttribute("cnt") + "] " + elemProblemDescription.getTextContent()
+                        txaTopTextArea.append("#" + elemSNo.getAttribute("cnt") + "] " + elemProblemDescription.getTextContent()
                                             + layout.newline);
+                        //Begin branch210201_1: Product Backlog screen changes
+                        txaBottomTextArea.append("#" + elemSNo.getAttribute("cnt") + "] " + elemProblemDescription.getTextContent()
+                                            + layout.newline);
+                        //End branch210201_1: Product Backlog screen changes
                     }
                     nodelistSolutionDescription = elemSNo.getElementsByTagName("SolutionDescription");
                     for (int k = 0; k < nodelistSolutionDescription.getLength(); k++) {
@@ -525,6 +538,10 @@ public class layout implements ItemListener, ActionListener {
                                                 + layout.newline);
                         }
                     }
+                    //Begin branch210201_1: Product Backlog screen changes
+                    txaBottomTextArea.append(new String("") 
+                                        + layout.newline);
+                    //End branch210201_1: Product Backlog screen changes
                 }
             }   
         } catch (Exception e) {
@@ -542,7 +559,10 @@ public class layout implements ItemListener, ActionListener {
             chcFaxPager.select("Fax");
             txtFaxPager.setText(new String(""));
             //chcOS.select("Windows");
-            cbgOS.setSelectedCheckbox(rdoWindows);
+            //Begin branch210201_1: Support for mobile
+            //cbgOS.setSelectedCheckbox(rdoWindows);
+            cbgOS.setSelectedCheckbox(rdoMobile);
+            //End branch210201_1: Support for mobile
             chkWord.setState(false);
             chkExcel.setState(false);
             chkPowerpoint.setState(false);
@@ -637,7 +657,8 @@ public class layout implements ItemListener, ActionListener {
         card1.add(new Label("Operating System: select any one"));
         panelOScbg = new Panel();
         cbgOS = new CheckboxGroup();
-        rdoWindows = new Checkbox("Windows", cbgOS, true);
+        //rdoWindows = new Checkbox("Windows", cbgOS, true);
+        rdoWindows = new Checkbox("Windows", cbgOS, false);
         panelOScbg.add(rdoWindows);
         rdoUnix = new Checkbox("Unix", cbgOS, false);
         panelOScbg.add(rdoUnix);
@@ -645,6 +666,10 @@ public class layout implements ItemListener, ActionListener {
         panelOScbg.add(rdoLinux);
         rdoOsx = new Checkbox("OS X", cbgOS, false);
         panelOScbg.add(rdoOsx);
+        //Begin branch210201_1: Support for mobile
+        rdoMobile = new Checkbox("Mobile", cbgOS, true);
+        panelOScbg.add(rdoMobile);
+        //End branch210201_1: Support for mobile
         card1.add(panelOScbg);
 
         card1.add(new Label("Software"));
@@ -779,6 +804,9 @@ public class layout implements ItemListener, ActionListener {
             rdoUnix.setEnabled(true);
             rdoLinux.setEnabled(true);
             rdoOsx.setEnabled(true);
+            //Begin branch210201_1: Support for mobile
+            rdoMobile.setEnabled(true);
+            //End branch210201_1: Support for mobile
             chkWord.setEnabled(true);
             chkExcel.setEnabled(true);
             chkPowerpoint.setEnabled(true);
@@ -806,6 +834,9 @@ public class layout implements ItemListener, ActionListener {
             rdoUnix.setEnabled(false);
             rdoLinux.setEnabled(false);
             rdoOsx.setEnabled(false);
+            //Begin branch210201_1: Support for mobile
+            rdoMobile.setEnabled(false);
+            //End branch210201_1: Support for mobile
             chkWord.setEnabled(false);
             chkExcel.setEnabled(false);
             chkPowerpoint.setEnabled(false);
