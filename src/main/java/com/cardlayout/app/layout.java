@@ -730,10 +730,16 @@ public class layout implements ItemListener, ActionListener {
         gridbag.setConstraints(lblProblem, c);
         card3.add(lblProblem);
         
-        c.weighty = 1.0;
+        //Begin branch210201_1: Product Backlog screen changes
+        //c.weighty = 1.0;
+        c.weighty = 0.0;
+        //End branch210201_1: Product Backlog screen changes
         txaTopTextArea = new TextArea();
         txaTopTextArea.setEditable(false);
         txaTopTextArea.setCaretPosition(0);
+        //Begin branch210201_1: Product Backlog screen changes
+        txaTopTextArea.setBackground(Color.magenta);
+        //End branch210201_1: Product Backlog screen changes
         ScrollPane scrpTopScrollPane = new ScrollPane(ScrollPane.SCROLLBARS_AS_NEEDED);
         scrpTopScrollPane.add(txaTopTextArea);
         gridbag.setConstraints(scrpTopScrollPane, c);
@@ -750,6 +756,9 @@ public class layout implements ItemListener, ActionListener {
         txaBottomTextArea = new TextArea();
         txaBottomTextArea.setEditable(false);
         txaBottomTextArea.setCaretPosition(0);
+        //Begin branch210201_1: Product Backlog screen changes
+        txaBottomTextArea.setBackground(Color.cyan);
+        //End branch210201_1: Product Backlog screen changes
         ScrollPane scrpBottomScrollPane = new ScrollPane(ScrollPane.SCROLLBARS_AS_NEEDED);
         scrpBottomScrollPane.add(txaBottomTextArea);
         gridbag.setConstraints(scrpBottomScrollPane, c);
