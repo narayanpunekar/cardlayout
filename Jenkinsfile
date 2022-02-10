@@ -32,12 +32,12 @@ pipeline {
 		}
 		stage("Docker build") {
 			steps {
-				sh "docker build -t narayanpunekar/cardlayout ."
+				sh "docker build -t npunekar/cardlayout ."
 			}
 		}
 		stage("Docker push") {
 			steps {
-				sh "docker push narayanpunekar/cardlayout"
+				sh "docker push npunekar/cardlayout"
 			}
 		}
     }
