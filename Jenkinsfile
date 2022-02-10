@@ -1,5 +1,9 @@
 pipeline {
-    agent any 
+    agent { 
+		docker { 
+			image 'openjdk:8-jdk-alpine'
+		}
+	}
     options { timeout(time: 30) }
     stages {
         stage("Stage One") {
