@@ -39,6 +39,7 @@ pipeline {
 			steps {
 				sh "cat ./password | docker login --username npunekar --password-stdin"  
 				sh "docker push npunekar/cardlayout"
+				sh "docker logout" 
 			}
 		}
     }
