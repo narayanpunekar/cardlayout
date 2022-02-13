@@ -37,7 +37,7 @@ pipeline {
 		}
 		stage("Docker push") {
 			steps {
-				sh "docker push npunekar/cardlayout"
+				sh "docker push npunekar/cardlayout --username npunekar --password Dockerhub123$"
 			}
 		}
     }
