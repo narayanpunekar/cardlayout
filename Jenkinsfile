@@ -32,7 +32,7 @@ pipeline {
 		}
 		stage("Docker build") {
 			steps {
-				sh "docker build -t npunekar/cardlayout ."
+				sh "docker build -t npunekar/cardlayout:${BUILD_TIMESTAMP} ."
 			}
 		}
 		stage("Docker push") {
@@ -42,9 +42,15 @@ pipeline {
 				sh "docker logout" 
 			}
 		}
+		stage("Deploy to staging") {
+			steps { 
+				sh "docker run -d --rm -p 8764:8080 --name cardlayout-app npunekar/cardlayout"
+			}
+		}
     }
     post {
         always {
+			sh "docker stop cardlayout-app" 
             mail to: 'narayan.v.punekar@gmail.com',
             subject: "Completed Pipeline: ${currentBuild.fullDisplayName}", 
             body: "Build completed, ${env.BUILD_URL}"
