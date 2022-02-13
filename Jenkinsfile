@@ -32,7 +32,7 @@ pipeline {
 		}
 		stage("Docker build") {
 			steps {
-				sh "docker build -t npunekar/cardlayout:${BUILD_TIMESTAMP} ."
+				sh "docker build -t npunekar/cardlayout ."
 			}
 		}
 		stage("Docker push") {
