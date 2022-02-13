@@ -37,7 +37,7 @@ pipeline {
 		}
 		stage("Docker push") {
 			steps {
-				sh cat ./password.txt | docker login --username npunekar --password-stdin  
+				sh "cat ./password.txt | docker login --username npunekar --password-stdin"  
 				sh "docker push npunekar/cardlayout"
 			}
 		}
