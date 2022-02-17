@@ -5,13 +5,11 @@ pipeline {
         stage("Stage One") {
             steps {
                 sleep 30
-                echo 'Step 1. Hello World'
             }
         }
         stage("Stage Two") {
             steps {
-                echo 'Step 2. Hello Hello World'
-                echo 'Step 3. Hello Hello Hello World'
+                echo 'Step 1. Hello World'
             }
         }
         stage("Checkout") {
