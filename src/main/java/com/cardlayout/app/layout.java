@@ -31,6 +31,8 @@ public class layout implements ItemListener, ActionListener {
     Panel card1;    //a panel that uses first "card"
     Panel card2;    //a panel that uses second "card"
     Panel card3;    //a panel that uses third "card"
+    Panel card4;    //a panel that uses fourth "card"
+    Panel card5;    //a panel that uses fifth "card"
     Button btnPrevious;
     Button btnNext;
     TextField txtFirstName;
@@ -66,6 +68,8 @@ public class layout implements ItemListener, ActionListener {
     final static String PROBLEMSPANEL = "IT Department";
     final static String SOLUTIONSPANEL = "Solutions Department";
     final static String PRODUCTBACKLOGPANEL = "Product Backlog";
+    final static String PIECHARTPANEL = "Pie Chart";
+    final static String BARCHARTPANEL = "Bar Chart";
     final static String SUBMITREQUEST = "Submit Request";
     final static String SUBMITSOLUTION = "Submit Solution";
     final static String RESET = "Reset";
@@ -225,36 +229,77 @@ public class layout implements ItemListener, ActionListener {
  * Save the Solution
  */
     private void fnProcessSolution() {
-        try {
-            DocumentBuilderFactory dbFactory = null;
-            DocumentBuilder documentBuilder = null;
-            Document xmlDocument = null;
-            Element elemSolutionDescription = null;
-            Node nodeSNo = null;
-            Element elemSNo = null;
+        DocumentBuilderFactory dbFactory = null;
+        DocumentBuilder documentBuilder = null;
+        Document xmlDocument = null;
+        Element elemSolutionDescription = null;
+        Node nodeSNo = null;
+        Element elemSNo = null;
 
+        Document xmlDocumentPieChart = null;
+        Element elemPieChartData = null;
+
+        try {
             dbFactory = DocumentBuilderFactory.newInstance();
             documentBuilder = dbFactory.newDocumentBuilder();
-            xmlDocument = documentBuilder.parse(new File("ProductBacklog.xml"));
+            xmlDocumentPieChart = documentBuilder.parse(new File("PieChartData.xml"));
+            elemPieChartData = xmlDocumentPieChart.getDocumentElement();
+        } catch(Exception ex1) {
+            xmlDocumentPieChart = documentBuilder.newDocument();
+            elemPieChartData = xmlDocumentPieChart.createElement("PieChartData");
+            xmlDocumentPieChart.appendChild(elemPieChartData);
+            ex1.printStackTrace();
+        } finally {
+            try {
+                xmlDocument = documentBuilder.parse(new File("ProductBacklog.xml"));
+                XPath xpath = XPathFactory.newInstance().newXPath();
 
-            XPath xpath = XPathFactory.newInstance().newXPath();
-            String strSnocnt = "/ProductBacklog/SNo[@cnt=" + iCntVal +"]";
-            nodeSNo = (Node)xpath.evaluate(strSnocnt, xmlDocument, XPathConstants.NODE);
-            elemSNo = (Element) nodeSNo;
+                //new <SNo><SolutionDescription>, increment <SolvedCnt>
+                String strSolutionDescription = "/ProductBacklog/SNo[@cnt=" + iCntVal + "][SolutionDescription]";
+                Node nodeSolutionDescriptionExists = null;
+                boolean bNodeSolutionDescriptionExists = false;
+                nodeSolutionDescriptionExists = (Node)xpath.evaluate(strSolutionDescription, xmlDocument, XPathConstants.NODE);
+                if (nodeSolutionDescriptionExists != null)
+                    bNodeSolutionDescriptionExists = true;
 
-            elemSolutionDescription = xmlDocument.createElement("SolutionDescription");
-            elemSolutionDescription.appendChild(xmlDocument.createTextNode(txaSolutionDescription.getText()));
-            elemSNo.appendChild(elemSolutionDescription);
+                if (!bNodeSolutionDescriptionExists) {
+                    String strSolvedcnt = "/PieChartData/SolvedCnt[last()]";
+                    Double dSolvedcntVal = (Double)xpath.evaluate(strSolvedcnt, xmlDocumentPieChart, XPathConstants.NUMBER);
+                    Element elemSolvedCnt = xmlDocumentPieChart.createElement("SolvedCnt");
+                    int iSolvedcntVal = dSolvedcntVal.intValue() + 1;
+                    elemSolvedCnt.appendChild(xmlDocumentPieChart.createTextNode((new Integer(iSolvedcntVal)).toString()));
+                    elemPieChartData.appendChild(elemSolvedCnt);
+                }
+                
+                //new <SolutionDescription>, increment <SolvedNum>
+                String strSolvednum = "/PieChartData/SolvedNum[last()]";
+                Double dSolvednumVal = (Double)xpath.evaluate(strSolvednum, xmlDocumentPieChart, XPathConstants.NUMBER);
+                Element elemSolvedNum = xmlDocumentPieChart.createElement("SolvedNum");
+                int iSolvednumVal = dSolvednumVal.intValue() + 1;
+                elemSolvedNum.appendChild(xmlDocumentPieChart.createTextNode((new Integer(iSolvednumVal)).toString()));
+                elemPieChartData.appendChild(elemSolvedNum);
 
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.transform(new DOMSource(xmlDocument), new StreamResult(new File("ProductBacklog.xml")));
-        } catch (Exception e) {
-            e.printStackTrace();
+                String strSnocnt = "/ProductBacklog/SNo[@cnt=" + iCntVal +"]";
+                nodeSNo = (Node)xpath.evaluate(strSnocnt, xmlDocument, XPathConstants.NODE);
+                elemSNo = (Element) nodeSNo;
+
+                elemSolutionDescription = xmlDocument.createElement("SolutionDescription");
+                elemSolutionDescription.appendChild(xmlDocument.createTextNode(txaSolutionDescription.getText()));
+                elemSNo.appendChild(elemSolutionDescription);
+
+                Transformer transformer = TransformerFactory.newInstance().newTransformer();
+                transformer.transform(new DOMSource(xmlDocument), new StreamResult(new File("ProductBacklog.xml")));
+
+                Transformer transformerPieChart = TransformerFactory.newInstance().newTransformer();
+                transformerPieChart.transform(new DOMSource(xmlDocumentPieChart), new StreamResult(new File("PieChartData.xml")));
+            } catch (Exception ex2) {
+                ex2.printStackTrace();
+            }
         }
     }
 
 /**
- * Populate the form with the saved data 
+ * Populate the form with the saved data
  */
     private void fnProcessXPath(int iCnt) {
         try {
@@ -377,31 +422,77 @@ public class layout implements ItemListener, ActionListener {
             String strPasswordVal = (String)xpath.evaluate(strPassword, xmlDocument, XPathConstants.STRING);
             txtPassword.setText(strPasswordVal);
             
+            //Begin branch_210123_1: Solution Description placeholder text @ Solutions Department screen
+            /* 
             String strSolutionDescription = "/ProductBacklog/SNo[@cnt=" + iCnt + "]/SolutionDescription";
             String strSolutionDescriptionVal = (String)xpath.evaluate(strSolutionDescription, xmlDocument, XPathConstants.STRING);
             txaSolutionDescription.setText(strSolutionDescriptionVal);
+            */
+            txaSolutionDescription.setFont(new Font(Font.SERIF,Font.ITALIC,15));
+            txaSolutionDescription.setText("<Enter Solution...>");
+            //End branch_210123_1: Solution Description placeholder text @ Solutions Department screen
         } catch(Exception ex4) {
             ex4.printStackTrace();
         }
     }
 
 /**
+ * Pie Chart
+ */
+    private void fnPieChart() {
+        try {
+            clsPieChart pieChart = new clsPieChart();
+            pieChart.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+/**
+ * Bar Chart
+ */
+    private void fnBarChart() {
+        //Begin branch210123_2: private class clsChartBar
+        try {
+            /*
+            clsBarChart barChart = new clsBarChart();
+            barChart.start();
+            */
+            JFrame frmBarChart = new JFrame("Product Backlog : Bar Chart");
+            frmBarChart.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        
+            //Create and set up the content pane.
+            clsChartBar barChart = new clsChartBar();
+            //Display the window.
+            frmBarChart.add(barChart);
+            frmBarChart.pack();
+            frmBarChart.setSize(1000, 700);
+            //frmBarChart.setAutoRequestFocus(true);
+            frmBarChart.setVisible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //End branch210123_2: private class clsChartBar
+    }
+    
+/**
  * Product Backlog
  */
     private void fnProductBacklog() {
-        DocumentBuilderFactory dbFactory = null;
-        DocumentBuilder documentBuilder = null;
-        Document xmlDocument = null;
-        NodeList nodelistSNo = null;
-        Node nodeSNo = null;
-        Element elemSNo = null;
-        NodeList nodelistProblemDescription = null;
-        Node nodeProblemDescription = null;
-        Element elemProblemDescription = null;
-        NodeList nodelistSolutionDescription = null;
-        Node nodeSolutionDescription = null;
-        Element elemSolutionDescription = null;
         try {
+            DocumentBuilderFactory dbFactory = null;
+            DocumentBuilder documentBuilder = null;
+            Document xmlDocument = null;
+            NodeList nodelistSNo = null;
+            Node nodeSNo = null;
+            Element elemSNo = null;
+            NodeList nodelistProblemDescription = null;
+            Node nodeProblemDescription = null;
+            Element elemProblemDescription = null;
+            NodeList nodelistSolutionDescription = null;
+            Node nodeSolutionDescription = null;
+            Element elemSolutionDescription = null;
+
             dbFactory = DocumentBuilderFactory.newInstance();
             documentBuilder = dbFactory.newDocumentBuilder();
             xmlDocument = documentBuilder.parse(new File("ProductBacklog.xml"));
@@ -571,7 +662,7 @@ public class layout implements ItemListener, ActionListener {
         card1.add(panelSoftware);
         
         card1.add(new Label("Problem Description"));
-        txaProblemDescription = new TextArea("", 5, 40, TextArea.SCROLLBARS_BOTH);
+        txaProblemDescription = new TextArea("", 20, 40, TextArea.SCROLLBARS_BOTH);
         txaProblemDescription.setCaretPosition(0);
         card1.add(txaProblemDescription);
         
@@ -582,7 +673,7 @@ public class layout implements ItemListener, ActionListener {
 
         lblSolutionDescription = new Label("Solution Description");
         card1.add(lblSolutionDescription);
-        txaSolutionDescription = new TextArea("", 5, 40, TextArea.SCROLLBARS_BOTH);
+        txaSolutionDescription = new TextArea("", 20, 40, TextArea.SCROLLBARS_BOTH);
         txaSolutionDescription.setCaretPosition(0);
         card1.add(txaSolutionDescription);
 
@@ -655,6 +746,22 @@ public class layout implements ItemListener, ActionListener {
         btnPrevious.addActionListener(this);
         btnNext.addActionListener(this);
     }
+
+/**
+ * Card Layout based on CardLayoutDemo
+ * The "card"
+ */
+    private void fnPanelFour() {
+        card4 = new Panel();
+    }
+    
+/**
+ * Card Layout based on CardLayoutDemo
+ * The "card"
+ */
+    private void fnPanelFive() {
+        card5 = new Panel();
+    }
     
     public void itemStateChanged(ItemEvent evt) {
         CardLayout cardLayout = (CardLayout)cards.getLayout();
@@ -718,6 +825,12 @@ public class layout implements ItemListener, ActionListener {
         if(evt.getItem().toString()==PRODUCTBACKLOGPANEL) {
             fnProductBacklog();
         }
+        if(evt.getItem().toString()==PIECHARTPANEL) {
+            fnPieChart();
+        }
+        if(evt.getItem().toString()==BARCHARTPANEL) {
+            fnBarChart();
+        }
     }
     
     public void addComponentToPane(Container pane) {
@@ -727,6 +840,8 @@ public class layout implements ItemListener, ActionListener {
         cb.add(PROBLEMSPANEL);
         cb.add(SOLUTIONSPANEL);
         cb.add(PRODUCTBACKLOGPANEL);
+        cb.add(PIECHARTPANEL);
+        cb.add(BARCHARTPANEL);
         cb.addItemListener(this);
         comboBoxPane.add(cb);
         
@@ -734,12 +849,16 @@ public class layout implements ItemListener, ActionListener {
         fnPanelOne();
         //fnPanelTwo();
         fnPanelThree();
+        fnPanelFour();
+        fnPanelFive();
 
         //Create the panel that contains the "cards".
         cards = new Panel(new CardLayout());
         cards.add(card1, PROBLEMSPANEL);
         cards.add(card1, SOLUTIONSPANEL);
         cards.add(card3, PRODUCTBACKLOGPANEL);
+        cards.add(card4, PIECHARTPANEL);
+        cards.add(card5, BARCHARTPANEL);
 
         pane.add(comboBoxPane, BorderLayout.PAGE_START);
         pane.add(cards, BorderLayout.CENTER);
@@ -790,4 +909,72 @@ public class layout implements ItemListener, ActionListener {
             }
         });
     }
+
+    //Begin branch210123_2: private class clsChartBar
+    private class clsChartBar extends Canvas {
+
+        Color colorBlack = Color.black;
+        Color colorRed = Color.red;
+        Color colorGreen = Color.green;
+        Color colorBlue = Color.blue;
+        boolean flag = true;
+
+        public void paint(Graphics g) {
+            try {
+                DocumentBuilderFactory dbFactory = null;
+                DocumentBuilder documentBuilder = null;
+                Document xmlDocumentPieChart = null;
+                Document xmlDocument = null;
+                dbFactory = DocumentBuilderFactory.newInstance();
+                documentBuilder = dbFactory.newDocumentBuilder();
+                xmlDocumentPieChart = documentBuilder.parse(new File("PieChartData.xml"));
+                xmlDocument = documentBuilder.parse(new File("ProductBacklog.xml"));
+                XPath xpath = XPathFactory.newInstance().newXPath();
+
+                String strSolvedcnt = "/PieChartData/SolvedCnt[last()]";
+                Double dSolvedcntVal = (Double)xpath.evaluate(strSolvedcnt, xmlDocumentPieChart, XPathConstants.NUMBER);
+                int iSolvedCntVal = dSolvedcntVal.intValue();
+
+                String strSolvednum = "/PieChartData/SolvedNum[last()]";
+                Double dSolvednumVal = (Double)xpath.evaluate(strSolvednum, xmlDocumentPieChart, XPathConstants.NUMBER);
+                int iSolvedNumVal = dSolvednumVal.intValue();
+
+                String strSnocnt = "/ProductBacklog/SNo[last()]/@cnt";
+                Double dSnocntVal = (Double)xpath.evaluate(strSnocnt, xmlDocument, XPathConstants.NUMBER);
+                int iSnocntVal = dSnocntVal.intValue();
+
+                double dMultiplier = 10.5;
+                int iTotal = iSolvedCntVal + iSolvedNumVal + iSnocntVal;
+                double dSolvedCntRect = ((double)iSolvedCntVal*100*dMultiplier)/(double)iTotal;
+                double dSolvedNumRect = ((double)iSolvedNumVal*100*dMultiplier)/(double)iTotal;
+                double dSnocntRect = ((double)iSnocntVal*100*dMultiplier)/(double)iTotal;
+
+                //Color color = new Color(245,155,200);
+                g.setColor(colorBlack);
+                //X-axis
+                g.drawLine(200, 490, 800, 490);
+                //Y-axis
+                g.drawLine(200, 490, 200, 100);
+
+                g.setColor(colorRed);
+                g.fill3DRect(200, 200, (int)dSnocntRect, 30, flag);
+                g.drawString("Count = " + iSnocntVal, (int)dSnocntRect+300, 215);
+
+                g.setColor(colorGreen);
+                g.fill3DRect(200, 280, (int)dSolvedCntRect, 30, flag);
+                g.drawString("Solved Num = " + iSolvedCntVal, (int)dSolvedCntRect+300, 295);
+
+                g.setColor(colorBlue);
+                g.fill3DRect(200, 360, (int)dSolvedNumRect, 30, flag);
+                g.drawString("Solved Cnt = " + iSolvedNumVal, (int)dSolvedNumRect+300, 375);
+
+                g.setColor(getForeground());
+                g.drawString("Value", 100, 300);
+            } catch(Exception ex1) {
+                ex1.printStackTrace();
+            } 
+        }
+    }
+    //End branch210123_2: private class clsChartBar
+
 }
