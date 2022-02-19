@@ -1,9 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package com.cardlayout.app;
+package com.javaapplication.cardlayout;
 
 import java.awt.BorderLayout;
 import java.awt.Button;
@@ -11,7 +6,9 @@ import java.awt.CardLayout;
 import java.awt.Checkbox;
 import java.awt.CheckboxGroup;
 import java.awt.Choice;
+import java.awt.Color;
 import java.awt.Container;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -26,6 +23,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import static java.lang.System.out;
+import java.net.InetAddress;
+import java.net.Socket;
+import javax.swing.JFrame;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
@@ -38,21 +43,24 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
-import javax.swing.JFrame;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import org.w3c.dom.NodeList;
 
 /**
  *
  * @author narayan.punekar@yahoo.com
+ * Card Layout based on CardLayoutDemo
+ *
  */
-public class layout implements ItemListener, ActionListener {
+public class clsLayout implements ItemListener, ActionListener {
+
     Panel cards;    //a panel that uses CardLayout
     Panel card1;    //a panel that uses first "card"
     Panel card2;    //a panel that uses second "card"
     Panel card3;    //a panel that uses third "card"
+    Panel card4;    //a panel that uses fourth "card"
+    Panel card5;    //a panel that uses fifth "card"
+    Panel card6;    //a panel that uses sixth "card"
     Button btnPrevious;
     Button btnNext;
     TextField txtFirstName;
@@ -60,13 +68,15 @@ public class layout implements ItemListener, ActionListener {
     TextField txtEmail;
     TextField txtPhoneOne;
     TextField txtPhoneTwo;
-    TextField txtFax;
-    Choice chcOS;
+    TextField txtFaxPager;
+    Choice chcFaxPager;
+    //Choice chcOS;
     CheckboxGroup cbgOS;
     Checkbox rdoWindows;
     Checkbox rdoUnix;
     Checkbox rdoLinux;
     Checkbox rdoOsx;
+    Checkbox rdoMobile;
     Checkbox chkWord;
     Checkbox chkExcel;
     Checkbox chkPowerpoint;
@@ -84,21 +94,33 @@ public class layout implements ItemListener, ActionListener {
     Button btnSubmitSolution;
     TextArea txaTopTextArea;
     TextArea txaBottomTextArea;
+    TextField txtSystemName;
+    TextArea txaChatTranscriptArea;
+    TextArea txaChatTextArea;
     final static String PROBLEMSPANEL = "IT Department";
     final static String SOLUTIONSPANEL = "Solutions Department";
     final static String PRODUCTBACKLOGPANEL = "Product Backlog";
+    final static String PIECHARTPANEL = "Pie Chart";
+    final static String BARCHARTPANEL = "Bar Chart";
+    final static String WLANCHATPANEL = "LAN/WLAN Chat";
     final static String SUBMITREQUEST = "Submit Request";
     final static String SUBMITSOLUTION = "Submit Solution";
     final static String RESET = "Reset";
     final static String PREVIOUS = "Previous";
     final static String NEXT = "Next";
+    final static String SEND = "Send";
+//    final static String PREVIOUSSOLUTION = "PreviousSolution";
+//    final static String NEXTSOLUTION = "NextSolution";
     final static String newline = "\n";
     int iCntVal;    //cnt value for Previous Next
     
-    public layout() {
+    public clsLayout() {
         iCntVal = 0;
     }
 
+    /**
+     * Save the form
+     */
     private void fnProcessRequest() {
         DocumentBuilderFactory dbFactory = null;
         DocumentBuilder documentBuilder = null;
@@ -110,11 +132,11 @@ public class layout implements ItemListener, ActionListener {
             documentBuilder = dbFactory.newDocumentBuilder();
             xmlDocument = documentBuilder.parse(new File("ProductBacklog.xml"));
             elemProductBacklog = xmlDocument.getDocumentElement();
-        } catch(Exception ex1) {
+        } catch(Exception e) {
             xmlDocument = documentBuilder.newDocument();
             elemProductBacklog = xmlDocument.createElement("ProductBacklog");
             xmlDocument.appendChild(elemProductBacklog);
-            ex1.printStackTrace();
+            e.printStackTrace();
         } finally {
             try {
                 XPath xpath = XPathFactory.newInstance().newXPath();
@@ -149,10 +171,17 @@ public class layout implements ItemListener, ActionListener {
                 elemPhoneTwo.appendChild(xmlDocument.createTextNode(txtPhoneTwo.getText()));
                 elemSNo.appendChild(elemPhoneTwo);
 
-                Element elemFax = xmlDocument.createElement("Fax");
-                elemFax.appendChild(xmlDocument.createTextNode(txtFax.getText()));
-                elemSNo.appendChild(elemFax);
+                Element elemFaxPager = xmlDocument.createElement("FaxPagerchoice");
+                elemSNo.appendChild(elemFaxPager);
+                Attr attrFaxPager = xmlDocument.createAttribute("faxpager");
+                attrFaxPager.appendChild(xmlDocument.createTextNode(chcFaxPager.getSelectedItem()));
+                elemFaxPager.setAttributeNode(attrFaxPager);
+                
+                Element elemFaxPagerNum = xmlDocument.createElement("FaxPagerNum");
+                elemFaxPagerNum.appendChild(xmlDocument.createTextNode(txtFaxPager.getText()));
+                elemSNo.appendChild(elemFaxPagerNum);
 
+                /*
                 Element elemOSchoice = xmlDocument.createElement("OSchoice");
                 //elemOSchoice.appendChild(xmlDocument.createTextNode("Operating System choice"));
                 elemSNo.appendChild(elemOSchoice);
@@ -160,6 +189,7 @@ public class layout implements ItemListener, ActionListener {
                 Attr attrOSchoice = xmlDocument.createAttribute("ostypechoice");
                 attrOSchoice.appendChild(xmlDocument.createTextNode(chcOS.getSelectedItem()));
                 elemOSchoice.setAttributeNode(attrOSchoice);
+                */
 
                 Element elemOSradio = xmlDocument.createElement("OSradio");
                 //elemOSradio.appendChild(xmlDocument.createTextNode("Operating System radio"));
@@ -223,12 +253,15 @@ public class layout implements ItemListener, ActionListener {
 
                 Transformer transformer = TransformerFactory.newInstance().newTransformer();
                 transformer.transform(new DOMSource(xmlDocument), new StreamResult(new File("ProductBacklog.xml")));
-            } catch(Exception ex2) {
-                ex2.printStackTrace();
+            } catch(Exception e) {
+                e.printStackTrace();
             }
         }
     }
 
+    /**
+     * Save the Solution
+     */
     private void fnProcessSolution() {
         DocumentBuilderFactory dbFactory = null;
         DocumentBuilder documentBuilder = null;
@@ -236,34 +269,80 @@ public class layout implements ItemListener, ActionListener {
         Element elemSolutionDescription = null;
         Node nodeSNo = null;
         Element elemSNo = null;
+
+        Document xmlDocumentPieChart = null;
+        Element elemPieChartData = null;
+
         try {
             dbFactory = DocumentBuilderFactory.newInstance();
             documentBuilder = dbFactory.newDocumentBuilder();
-            xmlDocument = documentBuilder.parse(new File("ProductBacklog.xml"));
-
-            XPath xpath = XPathFactory.newInstance().newXPath();
-            String strSnocnt = "/ProductBacklog/SNo[@cnt=" + iCntVal +"]";
-            nodeSNo = (Node)xpath.evaluate(strSnocnt, xmlDocument, XPathConstants.NODE);
-            elemSNo = (Element) nodeSNo;
-
-            elemSolutionDescription = xmlDocument.createElement("SolutionDescription");
-            elemSolutionDescription.appendChild(xmlDocument.createTextNode(txaSolutionDescription.getText()));
-            elemSNo.appendChild(elemSolutionDescription);
-
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.transform(new DOMSource(xmlDocument), new StreamResult(new File("ProductBacklog.xml")));
-        } catch (Exception e) {
+            xmlDocumentPieChart = documentBuilder.parse(new File("PieChartData.xml"));
+            elemPieChartData = xmlDocumentPieChart.getDocumentElement();
+        } catch(Exception e) {
+            xmlDocumentPieChart = documentBuilder.newDocument();
+            elemPieChartData = xmlDocumentPieChart.createElement("PieChartData");
+            xmlDocumentPieChart.appendChild(elemPieChartData);
             e.printStackTrace();
+        } finally {
+            try {
+                xmlDocument = documentBuilder.parse(new File("ProductBacklog.xml"));
+                XPath xpath = XPathFactory.newInstance().newXPath();
+
+                //new <SNo><SolutionDescription>, increment <SolvedCnt>
+                String strSolutionDescription = "/ProductBacklog/SNo[@cnt=" + iCntVal + "][SolutionDescription]";
+                Node nodeSolutionDescriptionExists = null;
+                boolean bNodeSolutionDescriptionExists = false;
+                nodeSolutionDescriptionExists = (Node)xpath.evaluate(strSolutionDescription, xmlDocument, XPathConstants.NODE);
+                if (nodeSolutionDescriptionExists != null)
+                    bNodeSolutionDescriptionExists = true;
+
+                if (!bNodeSolutionDescriptionExists) {
+                    String strSolvedcnt = "/PieChartData/SolvedCnt[last()]";
+                    Double dSolvedcntVal = (Double)xpath.evaluate(strSolvedcnt, xmlDocumentPieChart, XPathConstants.NUMBER);
+                    Element elemSolvedCnt = xmlDocumentPieChart.createElement("SolvedCnt");
+                    int iSolvedcntVal = dSolvedcntVal.intValue() + 1;
+                    elemSolvedCnt.appendChild(xmlDocumentPieChart.createTextNode((new Integer(iSolvedcntVal)).toString()));
+                    elemPieChartData.appendChild(elemSolvedCnt);
+                }
+                
+                //new <SolutionDescription>, increment <SolvedNum>
+                String strSolvednum = "/PieChartData/SolvedNum[last()]";
+                Double dSolvednumVal = (Double)xpath.evaluate(strSolvednum, xmlDocumentPieChart, XPathConstants.NUMBER);
+                Element elemSolvedNum = xmlDocumentPieChart.createElement("SolvedNum");
+                int iSolvednumVal = dSolvednumVal.intValue() + 1;
+                elemSolvedNum.appendChild(xmlDocumentPieChart.createTextNode((new Integer(iSolvednumVal)).toString()));
+                elemPieChartData.appendChild(elemSolvedNum);
+
+                String strSnocnt = "/ProductBacklog/SNo[@cnt=" + iCntVal +"]";
+                nodeSNo = (Node)xpath.evaluate(strSnocnt, xmlDocument, XPathConstants.NODE);
+                elemSNo = (Element) nodeSNo;
+
+                elemSolutionDescription = xmlDocument.createElement("SolutionDescription");
+                elemSolutionDescription.appendChild(xmlDocument.createTextNode(txaSolutionDescription.getText()));
+                elemSNo.appendChild(elemSolutionDescription);
+
+                Transformer transformer = TransformerFactory.newInstance().newTransformer();
+                transformer.transform(new DOMSource(xmlDocument), new StreamResult(new File("ProductBacklog.xml")));
+
+                Transformer transformerPieChart = TransformerFactory.newInstance().newTransformer();
+                transformerPieChart.transform(new DOMSource(xmlDocumentPieChart), new StreamResult(new File("PieChartData.xml")));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
+    /**
+     * Populate the form with the saved data
+     */
     private void fnProcessXPath(int iCnt) {
-        System.out.println("iCnt: " + iCnt);
-        DocumentBuilderFactory dbFactory = null;
-        DocumentBuilder documentBuilder = null;
-        Document xmlDocument = null;
-        XPath xpath = null;
         try {
+            out.println("iCnt: " + iCnt);
+            DocumentBuilderFactory dbFactory = null;
+            DocumentBuilder documentBuilder = null;
+            Document xmlDocument = null;
+            XPath xpath = null;
+
             dbFactory = DocumentBuilderFactory.newInstance();
             documentBuilder = dbFactory.newDocumentBuilder();
             xmlDocument = documentBuilder.parse(new File("ProductBacklog.xml"));
@@ -289,16 +368,21 @@ public class layout implements ItemListener, ActionListener {
             String strPhoneTwoVal = (String)xpath.evaluate(strPhoneTwo, xmlDocument, XPathConstants.STRING);
             txtPhoneTwo.setText(strPhoneTwoVal);
 
-            String strFax = "/ProductBacklog/SNo[@cnt=" + iCnt + "]/Fax";
-            String strFaxVal = (String)xpath.evaluate(strFax, xmlDocument, XPathConstants.STRING);
-            txtFax.setText(strFaxVal);
+            String strFaxPagerChoice = "/ProductBacklog/SNo[@cnt=" + iCnt + "]/FaxPagerchoice/@faxpager";
+            String strFaxPagerChoiceVal = (String)xpath.evaluate(strFaxPagerChoice, xmlDocument, XPathConstants.STRING);
+            chcFaxPager.select(strFaxPagerChoiceVal);
 
-            String strOSchoice = "/ProductBacklog/SNo[@cnt=" + iCnt + "]/OSchoice/@ostypechoice";
-            String strOSchoiceVal = (String)xpath.evaluate(strOSchoice, xmlDocument, XPathConstants.STRING);
-            chcOS.select(strOSchoiceVal);
+            String strFaxPagerNum = "/ProductBacklog/SNo[@cnt=" + iCnt + "]/FaxPagerNum";
+            String strFaxPagerNumVal = (String)xpath.evaluate(strFaxPagerNum, xmlDocument, XPathConstants.STRING);
+            txtFaxPager.setText(strFaxPagerNumVal);
+
+            //String strOSchoice = "/ProductBacklog/SNo[@cnt=" + iCnt + "]/OSchoice/@ostypechoice";
+            //String strOSchoiceVal = (String)xpath.evaluate(strOSchoice, xmlDocument, XPathConstants.STRING);
+            //chcOS.select(strOSchoiceVal);
 
             String strOSradio = "/ProductBacklog/SNo[@cnt=" + iCnt + "]/OSradio/@ostyperadio";
             String strOSradioVal = (String)xpath.evaluate(strOSradio, xmlDocument, XPathConstants.STRING);
+            //Begin branch210201_1: Support for mobile
             switch(strOSradioVal) {
                 case "Windows": 
                     cbgOS.setSelectedCheckbox(rdoWindows);
@@ -312,10 +396,15 @@ public class layout implements ItemListener, ActionListener {
                 case "OS X": 
                     cbgOS.setSelectedCheckbox(rdoOsx);
                     break;
+                case "Mobile":
+                    cbgOS.setSelectedCheckbox(rdoMobile);
+                    break;
                 default:
-                    cbgOS.setSelectedCheckbox(rdoWindows);
+                    //cbgOS.setSelectedCheckbox(rdoWindows);
+                    cbgOS.setSelectedCheckbox(rdoMobile);
                     break;
             }
+            //End branch210201_1: Support for mobile
 
             //String strSoftware = "/ProductBacklog/SNo[@cnt=" + iCnt + "]/Software";
             //Node nodeSoftware = (Node)xpath.evaluate(strSoftware, xmlDocument, XPathConstants.NODE);
@@ -371,30 +460,40 @@ public class layout implements ItemListener, ActionListener {
             
             String strPassword = "/ProductBacklog/SNo[@cnt=" + iCnt + "]/Password";
             String strPasswordVal = (String)xpath.evaluate(strPassword, xmlDocument, XPathConstants.STRING);
-            txtFax.setText(strPasswordVal);
+            txtPassword.setText(strPasswordVal);
             
+            //Begin branch210123_1: Solution Description placeholder text @ Solutions Department screen
+            /* 
             String strSolutionDescription = "/ProductBacklog/SNo[@cnt=" + iCnt + "]/SolutionDescription";
             String strSolutionDescriptionVal = (String)xpath.evaluate(strSolutionDescription, xmlDocument, XPathConstants.STRING);
             txaSolutionDescription.setText(strSolutionDescriptionVal);
-        } catch(Exception ex4) {
-            ex4.printStackTrace();
+            */
+            txaSolutionDescription.setFont(new Font(Font.SERIF,Font.ITALIC,15));
+            txaSolutionDescription.setText("<Enter Solution...>");
+            //End branch210123_1: Solution Description placeholder text @ Solutions Department screen
+        } catch(Exception e) {
+            e.printStackTrace();
         }
     }
 
+    /**
+ * Product Backlog
+ */
     private void fnProductBacklog() {
-        DocumentBuilderFactory dbFactory = null;
-        DocumentBuilder documentBuilder = null;
-        Document xmlDocument = null;
-        NodeList nodelistSNo = null;
-        Node nodeSNo = null;
-        Element elemSNo = null;
-        NodeList nodelistProblemDescription = null;
-        Node nodeProblemDescription = null;
-        Element elemProblemDescription = null;
-        NodeList nodelistSolutionDescription = null;
-        Node nodeSolutionDescription = null;
-        Element elemSolutionDescription = null;
         try {
+            DocumentBuilderFactory dbFactory = null;
+            DocumentBuilder documentBuilder = null;
+            Document xmlDocument = null;
+            NodeList nodelistSNo = null;
+            Node nodeSNo = null;
+            Element elemSNo = null;
+            NodeList nodelistProblemDescription = null;
+            Node nodeProblemDescription = null;
+            Element elemProblemDescription = null;
+            NodeList nodelistSolutionDescription = null;
+            Node nodeSolutionDescription = null;
+            Element elemSolutionDescription = null;
+
             dbFactory = DocumentBuilderFactory.newInstance();
             documentBuilder = dbFactory.newDocumentBuilder();
             xmlDocument = documentBuilder.parse(new File("ProductBacklog.xml"));
@@ -402,31 +501,35 @@ public class layout implements ItemListener, ActionListener {
          
             txaTopTextArea.setText(new String(""));
             txaBottomTextArea.setText(new String(""));
-            System.out.println("nodelistSNo.getLength(): " + nodelistSNo.getLength());
+            out.println("nodelistSNo.getLength(): " + nodelistSNo.getLength());
             for (int j = 0; j < nodelistSNo.getLength(); j++) {
                 nodeSNo = nodelistSNo.item(j);
             
                 if (nodeSNo.getNodeType() == Node.ELEMENT_NODE) {
                     elemSNo = (Element) nodeSNo;
-                    System.out.println("cnt : " + elemSNo.getAttribute("cnt"));
+                    out.println("cnt : " + elemSNo.getAttribute("cnt"));
                     nodelistProblemDescription = elemSNo.getElementsByTagName("ProblemDescription");
                     nodeProblemDescription = nodelistProblemDescription.item(0);
                     if (nodeProblemDescription.getNodeType() == Node.ELEMENT_NODE) {
                         elemProblemDescription = (Element) nodeProblemDescription;
-                        System.out.println("ProblemDescription : " + elemProblemDescription.getTextContent());
-                        txaTopTextArea.append(elemSNo.getAttribute("cnt") + "] " + elemProblemDescription.getTextContent()
-                                            + layout.newline);
+                        out.println("ProblemDescription : " + elemProblemDescription.getTextContent());
+                        txaTopTextArea.append("#" + elemSNo.getAttribute("cnt") + "] " + elemProblemDescription.getTextContent()
+                                            + clsLayout.newline);
+                        txaBottomTextArea.append("#" + elemSNo.getAttribute("cnt") + "] " + elemProblemDescription.getTextContent()
+                                            + clsLayout.newline);
                     }
                     nodelistSolutionDescription = elemSNo.getElementsByTagName("SolutionDescription");
                     for (int k = 0; k < nodelistSolutionDescription.getLength(); k++) {
                         nodeSolutionDescription = nodelistSolutionDescription.item(k);
                         if(nodeSolutionDescription.getNodeType()==Node.ELEMENT_NODE) {
                             elemSolutionDescription = (Element)nodeSolutionDescription;
-                            System.out.println("SolutionDescription : " + elemSolutionDescription.getTextContent());
+                            out.println("SolutionDescription : " + elemSolutionDescription.getTextContent());
                             txaBottomTextArea.append(elemSNo.getAttribute("cnt") + "." + (k+1) + "] " + elemSolutionDescription.getTextContent()
-                                                + layout.newline);
+                                                + clsLayout.newline);
                         }
                     }
+                    txaBottomTextArea.append(new String("") 
+                                        + clsLayout.newline);
                 }
             }   
         } catch (Exception e) {
@@ -441,9 +544,11 @@ public class layout implements ItemListener, ActionListener {
             txtEmail.setText(new String(""));
             txtPhoneOne.setText(new String(""));
             txtPhoneTwo.setText(new String(""));
-            txtFax.setText(new String(""));
-            chcOS.select("Windows");
-            cbgOS.setSelectedCheckbox(rdoWindows);
+            chcFaxPager.select("Fax");
+            txtFaxPager.setText(new String(""));
+            //chcOS.select("Windows");
+            //cbgOS.setSelectedCheckbox(rdoWindows);
+            cbgOS.setSelectedCheckbox(rdoMobile);
             chkWord.setState(false);
             chkExcel.setState(false);
             chkPowerpoint.setState(false);
@@ -452,8 +557,8 @@ public class layout implements ItemListener, ActionListener {
             txaProblemDescription.setText(new String(""));
             txtPassword.setText(new String(""));
             txaSolutionDescription.setText(new String(""));
-        } catch(Exception ex5) {
-            ex5.printStackTrace();
+        } catch(Exception e) {
+            e.printStackTrace();
         }
     }
      
@@ -478,8 +583,15 @@ public class layout implements ItemListener, ActionListener {
         if(evt.getActionCommand().equals(NEXT)) {
             fnProcessXPath(++iCntVal);
         }
+        if(evt.getActionCommand().equals(SEND)) {
+            fnWLANClientSocket();
+        }
     }
 
+/**
+ * Card Layout based on CardLayoutDemo
+ * The "card"
+ */
     private void fnPanelOne() {
         card1 = new Panel();
         card1.setLayout(new GridLayout(15,2,15,15));
@@ -511,10 +623,17 @@ public class layout implements ItemListener, ActionListener {
         txtPhoneTwo = new TextField(20);
         card1.add(txtPhoneTwo);
 
-        card1.add(new Label("Fax"));
-        txtFax = new TextField(20);
-        card1.add(txtFax);
+        card1.add(new Label("Fax or Pager: select any one"));
+        chcFaxPager = new Choice();
+        chcFaxPager.add("Fax");
+        chcFaxPager.add("Pager");
+        card1.add(chcFaxPager);
 
+        card1.add(new Label("Fax Pager"));
+        txtFaxPager = new TextField(20);
+        card1.add(txtFaxPager);
+
+        /*
         card1.add(new Label("Operating System: select any one"));
         chcOS = new Choice();
         chcOS.add("Windows");
@@ -522,11 +641,13 @@ public class layout implements ItemListener, ActionListener {
         chcOS.add("Linux");
         chcOS.add("OS X");
         card1.add(chcOS);
+        */
 
         card1.add(new Label("Operating System: select any one"));
         panelOScbg = new Panel();
         cbgOS = new CheckboxGroup();
-        rdoWindows = new Checkbox("Windows", cbgOS, true);
+        //rdoWindows = new Checkbox("Windows", cbgOS, true);
+        rdoWindows = new Checkbox("Windows", cbgOS, false);
         panelOScbg.add(rdoWindows);
         rdoUnix = new Checkbox("Unix", cbgOS, false);
         panelOScbg.add(rdoUnix);
@@ -534,6 +655,10 @@ public class layout implements ItemListener, ActionListener {
         panelOScbg.add(rdoLinux);
         rdoOsx = new Checkbox("OS X", cbgOS, false);
         panelOScbg.add(rdoOsx);
+        //Begin branch210201_1: Support for mobile
+        rdoMobile = new Checkbox("Mobile", cbgOS, true);
+        panelOScbg.add(rdoMobile);
+        //End branch210201_1: Support for mobile
         card1.add(panelOScbg);
 
         card1.add(new Label("Software"));
@@ -551,7 +676,7 @@ public class layout implements ItemListener, ActionListener {
         card1.add(panelSoftware);
         
         card1.add(new Label("Problem Description"));
-        txaProblemDescription = new TextArea("", 5, 40, TextArea.SCROLLBARS_BOTH);
+        txaProblemDescription = new TextArea("", 20, 40, TextArea.SCROLLBARS_BOTH);
         txaProblemDescription.setCaretPosition(0);
         card1.add(txaProblemDescription);
         
@@ -562,7 +687,7 @@ public class layout implements ItemListener, ActionListener {
 
         lblSolutionDescription = new Label("Solution Description");
         card1.add(lblSolutionDescription);
-        txaSolutionDescription = new TextArea("", 5, 40, TextArea.SCROLLBARS_BOTH);
+        txaSolutionDescription = new TextArea("", 20, 40, TextArea.SCROLLBARS_BOTH);
         txaSolutionDescription.setCaretPosition(0);
         card1.add(txaSolutionDescription);
 
@@ -577,6 +702,10 @@ public class layout implements ItemListener, ActionListener {
         card1.add(btnSubmitRequest);
     }
 
+/**
+ * Card Layout based on CardLayoutDemo
+ * The "card"
+ */
     private void fnPanelThree() {
         card3 = new Panel();
         card3.setLayout(new GridBagLayout());
@@ -590,10 +719,16 @@ public class layout implements ItemListener, ActionListener {
         gridbag.setConstraints(lblProblem, c);
         card3.add(lblProblem);
         
-        c.weighty = 1.0;
+        //Begin branch210201_1: Product Backlog screen changes
+        //c.weighty = 1.0;
+        c.weighty = 0.0;
+        //End branch210201_1: Product Backlog screen changes
         txaTopTextArea = new TextArea();
         txaTopTextArea.setEditable(false);
         txaTopTextArea.setCaretPosition(0);
+        //Begin branch210201_1: Product Backlog screen changes
+        txaTopTextArea.setBackground(Color.magenta);
+        //End branch210201_1: Product Backlog screen changes
         ScrollPane scrpTopScrollPane = new ScrollPane(ScrollPane.SCROLLBARS_AS_NEEDED);
         scrpTopScrollPane.add(txaTopTextArea);
         gridbag.setConstraints(scrpTopScrollPane, c);
@@ -610,6 +745,9 @@ public class layout implements ItemListener, ActionListener {
         txaBottomTextArea = new TextArea();
         txaBottomTextArea.setEditable(false);
         txaBottomTextArea.setCaretPosition(0);
+        //Begin branch210201_1: Product Backlog screen changes
+        txaBottomTextArea.setBackground(Color.cyan);
+        //End branch210201_1: Product Backlog screen changes
         ScrollPane scrpBottomScrollPane = new ScrollPane(ScrollPane.SCROLLBARS_AS_NEEDED);
         scrpBottomScrollPane.add(txaBottomTextArea);
         gridbag.setConstraints(scrpBottomScrollPane, c);
@@ -631,6 +769,187 @@ public class layout implements ItemListener, ActionListener {
         btnPrevious.addActionListener(this);
         btnNext.addActionListener(this);
     }
+
+/**
+ * Card Layout based on CardLayoutDemo
+ * The "card"
+ */
+    private void fnPanelFour() {
+        card4 = new Panel();
+    }
+    
+/**
+ * Card Layout based on CardLayoutDemo
+ * The "card"
+ */
+    private void fnPanelFive() {
+        card5 = new Panel();
+    }
+    
+/**
+ * Card Layout based on CardLayoutDemo
+ * The "card"
+ */
+    private void fnPanelSix() {
+        card6 = new Panel();
+        card6.setLayout(new GridBagLayout());
+        GridBagLayout gridbag = (GridBagLayout)card6.getLayout();
+        GridBagConstraints c = new GridBagConstraints();
+
+        Label lblSystemName = new Label("System Name or IPv4 Address:");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridwidth = 2;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.insets = new Insets(0,20,0,0);
+        c.weightx = 0.5;
+        c.weighty = 0.0;
+        gridbag.setConstraints(lblSystemName, c);
+        card6.add(lblSystemName);
+        
+        txtSystemName = new TextField(20);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridwidth = 1;
+        c.gridx = 0;
+        c.gridy = 1;
+        c.insets = new Insets(0,20,0,20);
+        c.weightx = 0.5;
+        c.weighty = 0.0;
+        gridbag.setConstraints(txtSystemName, c);
+        card6.add(txtSystemName);
+        
+        Button btnSend = new Button("Send");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridwidth = 1;
+        c.gridx = 1;
+        c.gridy = 1;
+        c.insets = new Insets(0,750,0,20);
+        c.weightx = 0.5;
+        c.weighty = 0.0;
+        gridbag.setConstraints(btnSend, c);
+        card6.add(btnSend);
+        btnSend.addActionListener(this);
+
+        Label lblChatText = new Label("Chat Text:");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridwidth = 1;
+        c.gridx = 1;
+        c.gridy = 2;
+        c.insets = new Insets(20,20,0,0);
+        c.weightx = 0.5;
+        c.weighty = 0.0;
+        gridbag.setConstraints(lblChatText, c);
+        card6.add(lblChatText);
+
+        txaChatTextArea = new TextArea();
+        txaChatTextArea.setEditable(true);
+        txaChatTextArea.setCaretPosition(0);
+        txaChatTextArea.setBackground(Color.white);
+        ScrollPane scrpChatTextScrollPane = new ScrollPane(ScrollPane.SCROLLBARS_AS_NEEDED);
+        scrpChatTextScrollPane.add(txaChatTextArea);
+        c.fill = GridBagConstraints.BOTH;
+        c.gridwidth = 1;
+        c.gridx = 1; 
+        c.gridy = 3;
+        c.insets = new Insets(0,20,0,20);
+        c.ipady = 15;       //make this component tall
+        c.weightx = 0.5;
+        c.weighty = 1.0;
+        gridbag.setConstraints(scrpChatTextScrollPane, c);
+        card6.add(scrpChatTextScrollPane);
+
+        Label lblChatTranscript = new Label("Chat Transcript:");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridwidth = 1;
+        c.gridx = 1;
+        c.gridy = 4;
+        c.insets = new Insets(20,20,0,0);
+        c.ipady = 0;       //reset to default
+        c.weightx = 0.5;
+        c.weighty = 0.0;
+        gridbag.setConstraints(lblChatTranscript, c);
+        card6.add(lblChatTranscript);
+
+        txaChatTranscriptArea = new TextArea();
+        txaChatTranscriptArea.setEditable(false);
+        txaChatTranscriptArea.setCaretPosition(0);
+        txaChatTranscriptArea.setBackground(Color.magenta);
+        ScrollPane scrpChatTranscriptScrollPane = new ScrollPane(ScrollPane.SCROLLBARS_AS_NEEDED);
+        scrpChatTranscriptScrollPane.add(txaChatTranscriptArea);
+        c.fill = GridBagConstraints.BOTH;
+        c.gridwidth = 1;
+        c.gridx = 1;
+        c.gridy = 5;
+        c.insets = new Insets(0,20,0,20);
+        c.ipady = 65;       //make this component taller
+        c.weightx = 0.5;
+        c.weighty = 1.0;
+        gridbag.setConstraints(scrpChatTranscriptScrollPane, c);
+        card6.add(scrpChatTranscriptScrollPane);
+
+        Label lblSystems = new Label("Systems:");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridwidth = 1;
+        c.gridx = 0;
+        c.gridy = 2;
+        c.insets = new Insets(20,20,0,20);
+        c.ipady = 0;       //reset to default
+        c.weightx = 0.5;
+        c.weighty = 0.0;
+        gridbag.setConstraints(lblSystems, c);
+        card6.add(lblSystems);
+
+        TextArea txaSystems = new TextArea();
+        txaSystems.setEditable(false);
+        txaSystems.setCaretPosition(0);
+        txaSystems.setBackground(Color.cyan);
+        ScrollPane scrpUsersScrollPane = new ScrollPane(ScrollPane.SCROLLBARS_AS_NEEDED);
+        scrpUsersScrollPane.add(txaSystems);
+        c.fill = GridBagConstraints.BOTH;
+        c.gridwidth = 1;
+        c.gridheight = 3;
+        c.gridx = 0;
+        c.gridy = 3;
+        c.insets = new Insets(0,20,0,20);
+        c.ipady = 80;       //make this component tallest; ipady(tallest)=ipady(tall)+ipady(taller)
+        c.weightx = 0.5;
+        c.weighty = 1.0;
+        gridbag.setConstraints(scrpUsersScrollPane, c);
+        card6.add(scrpUsersScrollPane);
+        
+        c.ipady = 0;        //reset to default
+    }
+
+    private void fnWLANChatServer() {
+        clsLayout clsLayout = new clsLayout();
+        new clsWLANChat(clsLayout, txaChatTranscriptArea).fnWLANServerSocket();
+    }
+
+    private void fnWLANClientSocket() {
+        try {
+            InetAddress inetAddress = InetAddress.getByName(txtSystemName.getText());
+            Socket s = new Socket(inetAddress, 5000);
+            PrintWriter printWriter = new PrintWriter(s.getOutputStream());
+            txaChatTextArea.setText(txaChatTextArea.getText().trim());
+            printWriter.print(txaChatTextArea.getText() + clsLayout.newline);
+            setChatTranscript(txaChatTranscriptArea, InetAddress.getLocalHost().getHostName() + ": ", txaChatTextArea.getText());
+            //txaChatTranscriptArea.append(layout.newline + InetAddress.getLocalHost().getHostName() + ": ");
+            //txaChatTranscriptArea.append(txaChatTextArea.getText());
+            printWriter.flush();
+            txaChatTextArea.setText(new String(""));
+            txaChatTextArea.setText(txaChatTextArea.getText().trim());
+            s.close();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void setChatTranscript(TextArea txaChatTranscriptArea, String str1, String str2) {
+        synchronized(this) {
+            txaChatTranscriptArea.append(clsLayout.newline + str1);
+            txaChatTranscriptArea.append(str2);
+        }
+    }
     
     public void itemStateChanged(ItemEvent evt) {
         CardLayout cardLayout = (CardLayout)cards.getLayout();
@@ -641,12 +960,16 @@ public class layout implements ItemListener, ActionListener {
             txtEmail.setEditable(true);
             txtPhoneOne.setEditable(true);
             txtPhoneTwo.setEditable(true);
-            txtFax.setEditable(true);
-            chcOS.setEnabled(true);
+            chcFaxPager.setEnabled(true);
+            txtFaxPager.setEditable(true);
+            //chcOS.setEnabled(true);
             rdoWindows.setEnabled(true);
             rdoUnix.setEnabled(true);
             rdoLinux.setEnabled(true);
             rdoOsx.setEnabled(true);
+            //Begin branch210201_1: Support for mobile
+            rdoMobile.setEnabled(true);
+            //End branch210201_1: Support for mobile
             chkWord.setEnabled(true);
             chkExcel.setEnabled(true);
             chkPowerpoint.setEnabled(true);
@@ -667,12 +990,16 @@ public class layout implements ItemListener, ActionListener {
             txtEmail.setEditable(false);
             txtPhoneOne.setEditable(false);
             txtPhoneTwo.setEditable(false);
-            txtFax.setEditable(false);
-            chcOS.setEnabled(false);
+            chcFaxPager.setEnabled(false);
+            txtFaxPager.setEditable(false);
+            //chcOS.setEnabled(false);
             rdoWindows.setEnabled(false);
             rdoUnix.setEnabled(false);
             rdoLinux.setEnabled(false);
             rdoOsx.setEnabled(false);
+            //Begin branch210201_1: Support for mobile
+            rdoMobile.setEnabled(false);
+            //End branch210201_1: Support for mobile
             chkWord.setEnabled(false);
             chkExcel.setEnabled(false);
             chkPowerpoint.setEnabled(false);
@@ -692,6 +1019,17 @@ public class layout implements ItemListener, ActionListener {
         if(evt.getItem().toString()==PRODUCTBACKLOGPANEL) {
             fnProductBacklog();
         }
+        /*
+        if(evt.getItem().toString()==PIECHARTPANEL) {
+            fnPieChart();
+        }
+        if(evt.getItem().toString()==BARCHARTPANEL) {
+            fnBarChart();
+        }
+        */
+        if(evt.getItem().toString()==WLANCHATPANEL) {
+            fnWLANChatServer();
+        }
     }
     
     public void addComponentToPane(Container pane) {
@@ -701,6 +1039,9 @@ public class layout implements ItemListener, ActionListener {
         cb.add(PROBLEMSPANEL);
         cb.add(SOLUTIONSPANEL);
         cb.add(PRODUCTBACKLOGPANEL);
+        cb.add(PIECHARTPANEL);
+        cb.add(BARCHARTPANEL);
+        cb.add(WLANCHATPANEL);
         cb.addItemListener(this);
         comboBoxPane.add(cb);
         
@@ -708,12 +1049,18 @@ public class layout implements ItemListener, ActionListener {
         fnPanelOne();
         //fnPanelTwo();
         fnPanelThree();
+        fnPanelFour();
+        fnPanelFive();
+        fnPanelSix();
 
         //Create the panel that contains the "cards".
         cards = new Panel(new CardLayout());
         cards.add(card1, PROBLEMSPANEL);
         cards.add(card1, SOLUTIONSPANEL);
         cards.add(card3, PRODUCTBACKLOGPANEL);
+        cards.add(card4, PIECHARTPANEL);
+        cards.add(card5, BARCHARTPANEL);
+        cards.add(card6, WLANCHATPANEL);
 
         pane.add(comboBoxPane, BorderLayout.PAGE_START);
         pane.add(cards, BorderLayout.CENTER);
@@ -730,7 +1077,7 @@ public class layout implements ItemListener, ActionListener {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         //Create and set up the content pane.
-        layout demo = new layout();
+        clsLayout demo = new clsLayout();
         demo.addComponentToPane(frame.getContentPane());
         
         //Display the window.
@@ -764,4 +1111,5 @@ public class layout implements ItemListener, ActionListener {
             }
         });
     }
+
 }
