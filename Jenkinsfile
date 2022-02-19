@@ -30,7 +30,7 @@ pipeline {
 		}
 		stage("Docker build") {
 			steps {
-				sh "docker build -t npunekar/cardlayout ."
+				sh "docker build -f ExecDockerfile -t npunekar/cardlayout ."
 			}
 		}
 		stage("Docker push") {
@@ -42,7 +42,7 @@ pipeline {
 		}
 		stage("Deploy to staging") {
 			steps { 
-				sh "docker run -d -p 8764:8080 --name cardlayout-app npunekar/cardlayout"
+				sh "docker run -d -p 8765:8080 -e JAVA_OPTS='-Xms3G -Xmx4G' --name cardlayout-app npunekar/cardlayout"
 			}
 		}
     }
