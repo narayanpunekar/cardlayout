@@ -459,12 +459,12 @@ public class layout implements ItemListener, ActionListener {
  * Pie Chart
  */
     private void fnPieChart() {
-        try {
-            clsPieChart pieChart = new clsPieChart();
-            pieChart.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        //try {
+            //clsPieChart pieChart = new clsPieChart();
+            //pieChart.start();
+        //} catch (Exception e) {
+        //    e.printStackTrace();
+        //}
     }
 
 /**
@@ -472,25 +472,25 @@ public class layout implements ItemListener, ActionListener {
  */
     private void fnBarChart() {
         //Begin branch210123_2: private class clsChartBar
-        try {
+        //try {
             /*
             clsBarChart barChart = new clsBarChart();
             barChart.start();
             */
-            JFrame frmBarChart = new JFrame("Product Backlog : Bar Chart");
-            frmBarChart.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            //JFrame frmBarChart = new JFrame("Product Backlog : Bar Chart");
+            //frmBarChart.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         
             //Create and set up the content pane.
-            clsChartBar barChart = new clsChartBar();
+            //clsChartBar barChart = new clsChartBar();
             //Display the window.
-            frmBarChart.add(barChart);
-            frmBarChart.pack();
-            frmBarChart.setSize(1000, 700);
+            //frmBarChart.add(barChart);
+            //frmBarChart.pack();
+            //frmBarChart.setSize(1000, 700);
             //frmBarChart.setAutoRequestFocus(true);
-            frmBarChart.setVisible(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            //frmBarChart.setVisible(true);
+        //} catch (Exception e) {
+        //    e.printStackTrace();
+        //}
         //End branch210123_2: private class clsChartBar
     }
 
