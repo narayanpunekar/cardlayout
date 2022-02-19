@@ -59,7 +59,7 @@ public class clsBarChart extends Application {
 
         String strSnocnt = "/ProductBacklog/SNo[last()]/@cnt";
         Double dSnocntVal = (Double)xpath.evaluate(strSnocnt, xmlDocument, XPathConstants.NUMBER);
-        Integer iSnocntVal = dSnocntVal.intValue();
+        int iSnocntVal = dSnocntVal.intValue();
 
         stage.setTitle("Product Backlog");
         final NumberAxis xAxis = new NumberAxis();

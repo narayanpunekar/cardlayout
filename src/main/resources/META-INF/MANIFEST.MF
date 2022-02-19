@@ -2,4 +2,5 @@ Manifest-Version: 1.0
 Built-By: narayan.punekar@yahoo.com
 Created-By: Apache Maven 3.6.0
 Build-Jdk: 1.8.0_202
+Class-Path: bagri-client-hazelcast-1.2.0.jar bagri-core-1.2.0.jar bagri-xqj-1.2.0.jar bagri-xquery-saxon-1.2.0.jar hazelcast-4.1.1.jar oxquery.jar Saxon-HE-10.3.jar slf4j-api-2.0.0-alpha1.jar slf4j-nop-2.0.0-alpha1.jar xmlbeans-4.0.0.jar xmlparserv2-19.9.0.0.jar xqjapi-1.0-fr.jar xstream-1.4.15.jar
 Main-Class: com.cardlayout.app.layout

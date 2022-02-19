@@ -10,6 +10,10 @@ import static java.lang.System.out;
 import java.io.File;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.Socket;
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
@@ -33,6 +37,7 @@ public class layout implements ItemListener, ActionListener {
     Panel card3;    //a panel that uses third "card"
     Panel card4;    //a panel that uses fourth "card"
     Panel card5;    //a panel that uses fifth "card"
+    Panel card6;    //a panel that uses sixth "card"
     Button btnPrevious;
     Button btnNext;
     TextField txtFirstName;
@@ -68,16 +73,21 @@ public class layout implements ItemListener, ActionListener {
     Button btnSubmitSolution;
     TextArea txaTopTextArea;
     TextArea txaBottomTextArea;
+    TextField txtSystemName;
+    TextArea txaChatTranscriptArea;
+    TextArea txaChatTextArea;
     final static String PROBLEMSPANEL = "IT Department";
     final static String SOLUTIONSPANEL = "Solutions Department";
     final static String PRODUCTBACKLOGPANEL = "Product Backlog";
     final static String PIECHARTPANEL = "Pie Chart";
     final static String BARCHARTPANEL = "Bar Chart";
+    final static String WLANCHATPANEL = "LAN/WLAN Chat";
     final static String SUBMITREQUEST = "Submit Request";
     final static String SUBMITSOLUTION = "Submit Solution";
     final static String RESET = "Reset";
     final static String PREVIOUS = "Previous";
     final static String NEXT = "Next";
+    final static String SEND = "Send";
 //    final static String PREVIOUSSOLUTION = "PreviousSolution";
 //    final static String NEXTSOLUTION = "NextSolution";
     final static String newline = "\n";
@@ -101,11 +111,11 @@ public class layout implements ItemListener, ActionListener {
             documentBuilder = dbFactory.newDocumentBuilder();
             xmlDocument = documentBuilder.parse(new File("ProductBacklog.xml"));
             elemProductBacklog = xmlDocument.getDocumentElement();
-        } catch(Exception ex1) {
+        } catch(Exception e) {
             xmlDocument = documentBuilder.newDocument();
             elemProductBacklog = xmlDocument.createElement("ProductBacklog");
             xmlDocument.appendChild(elemProductBacklog);
-            ex1.printStackTrace();
+            e.printStackTrace();
         } finally {
             try {
                 XPath xpath = XPathFactory.newInstance().newXPath();
@@ -222,8 +232,8 @@ public class layout implements ItemListener, ActionListener {
 
                 Transformer transformer = TransformerFactory.newInstance().newTransformer();
                 transformer.transform(new DOMSource(xmlDocument), new StreamResult(new File("ProductBacklog.xml")));
-            } catch(Exception ex2) {
-                ex2.printStackTrace();
+            } catch(Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -247,11 +257,11 @@ public class layout implements ItemListener, ActionListener {
             documentBuilder = dbFactory.newDocumentBuilder();
             xmlDocumentPieChart = documentBuilder.parse(new File("PieChartData.xml"));
             elemPieChartData = xmlDocumentPieChart.getDocumentElement();
-        } catch(Exception ex1) {
+        } catch(Exception e) {
             xmlDocumentPieChart = documentBuilder.newDocument();
             elemPieChartData = xmlDocumentPieChart.createElement("PieChartData");
             xmlDocumentPieChart.appendChild(elemPieChartData);
-            ex1.printStackTrace();
+            e.printStackTrace();
         } finally {
             try {
                 xmlDocument = documentBuilder.parse(new File("ProductBacklog.xml"));
@@ -295,8 +305,8 @@ public class layout implements ItemListener, ActionListener {
 
                 Transformer transformerPieChart = TransformerFactory.newInstance().newTransformer();
                 transformerPieChart.transform(new DOMSource(xmlDocumentPieChart), new StreamResult(new File("PieChartData.xml")));
-            } catch (Exception ex2) {
-                ex2.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -440,8 +450,8 @@ public class layout implements ItemListener, ActionListener {
             txaSolutionDescription.setFont(new Font(Font.SERIF,Font.ITALIC,15));
             txaSolutionDescription.setText("<Enter Solution...>");
             //End branch210123_1: Solution Description placeholder text @ Solutions Department screen
-        } catch(Exception ex4) {
-            ex4.printStackTrace();
+        } catch(Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -483,7 +493,7 @@ public class layout implements ItemListener, ActionListener {
         }
         //End branch210123_2: private class clsChartBar
     }
-    
+
 /**
  * Product Backlog
  */
@@ -571,8 +581,8 @@ public class layout implements ItemListener, ActionListener {
             txaProblemDescription.setText(new String(""));
             txtPassword.setText(new String(""));
             txaSolutionDescription.setText(new String(""));
-        } catch(Exception ex5) {
-            ex5.printStackTrace();
+        } catch(Exception e) {
+            e.printStackTrace();
         }
     }
      
@@ -596,6 +606,9 @@ public class layout implements ItemListener, ActionListener {
         }
         if(evt.getActionCommand().equals(NEXT)) {
             fnProcessXPath(++iCntVal);
+        }
+        if(evt.getActionCommand().equals(SEND)) {
+            fnWLANClientSocket();
         }
     }
 
@@ -797,6 +810,171 @@ public class layout implements ItemListener, ActionListener {
         card5 = new Panel();
     }
     
+/**
+ * Card Layout based on CardLayoutDemo
+ * The "card"
+ */
+    private void fnPanelSix() {
+        card6 = new Panel();
+        card6.setLayout(new GridBagLayout());
+        GridBagLayout gridbag = (GridBagLayout)card6.getLayout();
+        GridBagConstraints c = new GridBagConstraints();
+
+        Label lblSystemName = new Label("System Name or IPv4 Address:");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridwidth = 2;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.insets = new Insets(0,20,0,0);
+        c.weightx = 0.5;
+        c.weighty = 0.0;
+        gridbag.setConstraints(lblSystemName, c);
+        card6.add(lblSystemName);
+        
+        txtSystemName = new TextField(20);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridwidth = 1;
+        c.gridx = 0;
+        c.gridy = 1;
+        c.insets = new Insets(0,20,0,20);
+        c.weightx = 0.5;
+        c.weighty = 0.0;
+        gridbag.setConstraints(txtSystemName, c);
+        card6.add(txtSystemName);
+        
+        Button btnSend = new Button("Send");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridwidth = 1;
+        c.gridx = 1;
+        c.gridy = 1;
+        c.insets = new Insets(0,750,0,20);
+        c.weightx = 0.5;
+        c.weighty = 0.0;
+        gridbag.setConstraints(btnSend, c);
+        card6.add(btnSend);
+        btnSend.addActionListener(this);
+
+        Label lblChatText = new Label("Chat Text:");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridwidth = 1;
+        c.gridx = 1;
+        c.gridy = 2;
+        c.insets = new Insets(20,20,0,0);
+        c.weightx = 0.5;
+        c.weighty = 0.0;
+        gridbag.setConstraints(lblChatText, c);
+        card6.add(lblChatText);
+
+        txaChatTextArea = new TextArea();
+        txaChatTextArea.setEditable(true);
+        txaChatTextArea.setCaretPosition(0);
+        txaChatTextArea.setBackground(Color.white);
+        ScrollPane scrpChatTextScrollPane = new ScrollPane(ScrollPane.SCROLLBARS_AS_NEEDED);
+        scrpChatTextScrollPane.add(txaChatTextArea);
+        c.fill = GridBagConstraints.BOTH;
+        c.gridwidth = 1;
+        c.gridx = 1; 
+        c.gridy = 3;
+        c.insets = new Insets(0,20,0,20);
+        c.ipady = 15;       //make this component tall
+        c.weightx = 0.5;
+        c.weighty = 1.0;
+        gridbag.setConstraints(scrpChatTextScrollPane, c);
+        card6.add(scrpChatTextScrollPane);
+
+        Label lblChatTranscript = new Label("Chat Transcript:");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridwidth = 1;
+        c.gridx = 1;
+        c.gridy = 4;
+        c.insets = new Insets(20,20,0,0);
+        c.ipady = 0;       //reset to default
+        c.weightx = 0.5;
+        c.weighty = 0.0;
+        gridbag.setConstraints(lblChatTranscript, c);
+        card6.add(lblChatTranscript);
+
+        txaChatTranscriptArea = new TextArea();
+        txaChatTranscriptArea.setEditable(false);
+        txaChatTranscriptArea.setCaretPosition(0);
+        txaChatTranscriptArea.setBackground(Color.magenta);
+        ScrollPane scrpChatTranscriptScrollPane = new ScrollPane(ScrollPane.SCROLLBARS_AS_NEEDED);
+        scrpChatTranscriptScrollPane.add(txaChatTranscriptArea);
+        c.fill = GridBagConstraints.BOTH;
+        c.gridwidth = 1;
+        c.gridx = 1;
+        c.gridy = 5;
+        c.insets = new Insets(0,20,0,20);
+        c.ipady = 65;       //make this component taller
+        c.weightx = 0.5;
+        c.weighty = 1.0;
+        gridbag.setConstraints(scrpChatTranscriptScrollPane, c);
+        card6.add(scrpChatTranscriptScrollPane);
+
+        Label lblSystems = new Label("Systems:");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridwidth = 1;
+        c.gridx = 0;
+        c.gridy = 2;
+        c.insets = new Insets(20,20,0,20);
+        c.ipady = 0;       //reset to default
+        c.weightx = 0.5;
+        c.weighty = 0.0;
+        gridbag.setConstraints(lblSystems, c);
+        card6.add(lblSystems);
+
+        TextArea txaSystems = new TextArea();
+        txaSystems.setEditable(false);
+        txaSystems.setCaretPosition(0);
+        txaSystems.setBackground(Color.cyan);
+        ScrollPane scrpUsersScrollPane = new ScrollPane(ScrollPane.SCROLLBARS_AS_NEEDED);
+        scrpUsersScrollPane.add(txaSystems);
+        c.fill = GridBagConstraints.BOTH;
+        c.gridwidth = 1;
+        c.gridheight = 3;
+        c.gridx = 0;
+        c.gridy = 3;
+        c.insets = new Insets(0,20,0,20);
+        c.ipady = 80;       //make this component tallest; ipady(tallest)=ipady(tall)+ipady(taller)
+        c.weightx = 0.5;
+        c.weighty = 1.0;
+        gridbag.setConstraints(scrpUsersScrollPane, c);
+        card6.add(scrpUsersScrollPane);
+        
+        c.ipady = 0;        //reset to default
+    }
+
+    private void fnWLANChatServer() {
+        layout clsLayout = new layout();
+        new clsWLANChat(clsLayout, txaChatTranscriptArea).fnWLANServerSocket();
+    }
+
+    private void fnWLANClientSocket() {
+        try {
+            InetAddress inetAddress = InetAddress.getByName(txtSystemName.getText());
+            Socket s = new Socket(inetAddress, 5000);
+            PrintWriter printWriter = new PrintWriter(s.getOutputStream());
+            txaChatTextArea.setText(txaChatTextArea.getText().trim());
+            printWriter.print(txaChatTextArea.getText() + layout.newline);
+            setChatTranscript(txaChatTranscriptArea, InetAddress.getLocalHost().getHostName() + ": ", txaChatTextArea.getText());
+            //txaChatTranscriptArea.append(layout.newline + InetAddress.getLocalHost().getHostName() + ": ");
+            //txaChatTranscriptArea.append(txaChatTextArea.getText());
+            printWriter.flush();
+            txaChatTextArea.setText(new String(""));
+            txaChatTextArea.setText(txaChatTextArea.getText().trim());
+            s.close();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void setChatTranscript(TextArea txaChatTranscriptArea, String str1, String str2) {
+        synchronized(this) {
+            txaChatTranscriptArea.append(layout.newline + str1);
+            txaChatTranscriptArea.append(str2);
+        }
+    }
+    
     public void itemStateChanged(ItemEvent evt) {
         CardLayout cardLayout = (CardLayout)cards.getLayout();
         cardLayout.show(cards, (String)evt.getItem());
@@ -871,6 +1049,9 @@ public class layout implements ItemListener, ActionListener {
         if(evt.getItem().toString()==BARCHARTPANEL) {
             fnBarChart();
         }
+        if(evt.getItem().toString()==WLANCHATPANEL) {
+            fnWLANChatServer();
+        }
     }
     
     public void addComponentToPane(Container pane) {
@@ -882,6 +1063,7 @@ public class layout implements ItemListener, ActionListener {
         cb.add(PRODUCTBACKLOGPANEL);
         cb.add(PIECHARTPANEL);
         cb.add(BARCHARTPANEL);
+        cb.add(WLANCHATPANEL);
         cb.addItemListener(this);
         comboBoxPane.add(cb);
         
@@ -891,6 +1073,7 @@ public class layout implements ItemListener, ActionListener {
         fnPanelThree();
         fnPanelFour();
         fnPanelFive();
+        fnPanelSix();
 
         //Create the panel that contains the "cards".
         cards = new Panel(new CardLayout());
@@ -899,6 +1082,7 @@ public class layout implements ItemListener, ActionListener {
         cards.add(card3, PRODUCTBACKLOGPANEL);
         cards.add(card4, PIECHARTPANEL);
         cards.add(card5, BARCHARTPANEL);
+        cards.add(card6, WLANCHATPANEL);
 
         pane.add(comboBoxPane, BorderLayout.PAGE_START);
         pane.add(cards, BorderLayout.CENTER);
@@ -1010,8 +1194,8 @@ public class layout implements ItemListener, ActionListener {
 
                 g.setColor(getForeground());
                 g.drawString("Value", 100, 300);
-            } catch(Exception ex1) {
-                ex1.printStackTrace();
+            } catch(Exception e) {
+                e.printStackTrace();
             } 
         }
     }
