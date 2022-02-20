@@ -20,7 +20,7 @@ pipeline {
         }
         stage("Compile") {
             steps {
-                sh "/var/jenkins_home/tools/hudson.tasks.Maven_MavenInstallation/maven363/bin/mvn clean compile"
+                sh "/var/jenkins_home/tools/hudson.tasks.Maven_MavenInstallation/maven363/bin/mvn compile"
             }
         }
 		stage("Package") {
